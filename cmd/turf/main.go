@@ -19,7 +19,8 @@ import (
 )
 
 type CLI struct {
-	Output string `short:"o" help:"Output format: json, custom-columns=HEADER:.path,..." name:"output"`
+	Output    string `short:"o" help:"Output format: json, custom-columns=HEADER:.path,..." name:"output"`
+	UserAgent string `help:"User-Agent header sent with each HTTP request." name:"user-agent"`
 
 	Fixtures FixturesCmd `cmd:"" help:"List fixtures (race meetings)."`
 	Races    RacesCmd    `cmd:"" help:"List races for a fixture."`
@@ -31,14 +32,16 @@ type FixturesCmd struct {
 	Date   string `help:"Date to query (YYYY-MM-DD)." xor:"period"`
 	Course string `help:"Filter by course (tokyo, kyoto, hanshin, nakayama, chukyo, kokura, sapporo, hakodate, fukushima, niigata)."`
 
-	Output string `kong:"-"`
+	Output    string `kong:"-"`
+	UserAgent string `kong:"-"`
 }
 
 type RacesCmd struct {
 	Date   string `help:"Date to query (YYYY-MM-DD)." required:""`
 	Course string `help:"Course name (tokyo, kyoto, hanshin, nakayama, chukyo, kokura, sapporo, hakodate, fukushima, niigata)." required:""`
 
-	Output string `kong:"-"`
+	Output    string `kong:"-"`
+	UserAgent string `kong:"-"`
 }
 
 type ResultCmd struct {
@@ -46,7 +49,8 @@ type ResultCmd struct {
 	Course string `help:"Course name (tokyo, kyoto, hanshin, nakayama, chukyo, kokura, sapporo, hakodate, fukushima, niigata)." required:""`
 	Race   int    `help:"Race number." required:""`
 
-	Output string `kong:"-"`
+	Output    string `kong:"-"`
+	UserAgent string `kong:"-"`
 }
 
 var fixturesDefaultColumns = []output.Column{
@@ -87,7 +91,7 @@ func (cmd *FixturesCmd) Run() error {
 		return err
 	}
 
-	client := newServices()
+	client := newServices(cmd.UserAgent)
 	fixtures, err := client.fixtureSvc.ListFixtures(context.Background(), query)
 	if err != nil {
 		return err
@@ -102,7 +106,7 @@ func (cmd *RacesCmd) Run() error {
 		return err
 	}
 
-	client := newServices()
+	client := newServices(cmd.UserAgent)
 	raceCards, err := client.raceCardSvc.ListRaceCards(context.Background(), query)
 	if err != nil {
 		return err
@@ -117,7 +121,7 @@ func (cmd *ResultCmd) Run() error {
 		return err
 	}
 
-	client := newServices()
+	client := newServices(cmd.UserAgent)
 	result, err := client.raceResultSvc.GetRaceResult(context.Background(), query)
 	if err != nil {
 		return err
@@ -199,11 +203,17 @@ type services struct {
 	raceResultSvc turf.RaceResultService
 }
 
-func newServices() services {
+func newServices(userAgent string) services {
 	httpClient := turf.NewClient(nil)
+	if userAgent != "" {
+		httpClient.SetUserAgent(userAgent)
+	}
 	jraClient := jra.NewJRAClient(httpClient)
 
 	jraenHTTPClient := turf.NewClient(nil)
+	if userAgent != "" {
+		jraenHTTPClient.SetUserAgent(userAgent)
+	}
 	jraenBaseURL, _ := url.Parse("https://jra.jp/JRAEN/AP/")
 	jraenHTTPClient.SetBaseURL(jraenBaseURL)
 	jraenClient := jraen.NewJRAENClient(jraenHTTPClient)
@@ -267,6 +277,9 @@ func main() {
 	cli.Fixtures.Output = cli.Output
 	cli.Races.Output = cli.Output
 	cli.Result.Output = cli.Output
+	cli.Fixtures.UserAgent = cli.UserAgent
+	cli.Races.UserAgent = cli.UserAgent
+	cli.Result.UserAgent = cli.UserAgent
 
 	if err := ctx.Run(); err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
