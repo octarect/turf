@@ -135,7 +135,7 @@ func TestHorseSexUnmarshalXPath(t *testing.T) {
 		wantErr bool
 	}{
 		{"male", "牡", model.HorseSexMale, false},
-		{"mare", "牝", model.HorseSexMare, false},
+		{"femare", "牝", model.HorseSexFemale, false},
 		{"gelding", "セ", model.HorseSexGelding, false},
 		{"invalid", "騸", 0, true},
 	}
@@ -486,7 +486,7 @@ func TestGetRaceResult(t *testing.T) {
 				WinFavorite: 3,
 				Horse: model.EntryHorse{
 					Name:       "テストホース2",
-					Sex:        model.HorseSexMare,
+					Sex:        model.HorseSexFemale,
 					Age:        4,
 					Weight:     460,
 					WeightDiff: 0,

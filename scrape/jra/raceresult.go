@@ -143,7 +143,7 @@ func (hs *horseSex) UnmarshalXPath(text []byte) error {
 	case "牡":
 		hs0 = model.HorseSexMale
 	case "牝":
-		hs0 = model.HorseSexMare
+		hs0 = model.HorseSexFemale
 	case "セ", "せん":
 		hs0 = model.HorseSexGelding
 	default:

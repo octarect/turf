@@ -59,7 +59,7 @@ func TestEnumMarshalJSON(t *testing.T) {
 		{name: "surface", v: SurfaceDirt, want: `"dirt"`},
 		{name: "weather", v: WeatherRainy, want: `"rainy"`},
 		{name: "going", v: GoingDirtMuddy, want: `"muddy"`},
-		{name: "horse sex", v: HorseSexMare, want: `"mare"`},
+		{name: "horse sex", v: HorseSexFemale, want: `"female"`},
 		{name: "margin kind", v: MarginKindHead, want: `"head"`},
 		{name: "invalid", v: Surface(99), want: `"invalid"`},
 	}
