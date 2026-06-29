@@ -5,19 +5,19 @@ import "encoding/json"
 // RaceCard is the entry list for a single race within a fixture.
 // A fixture typically contains 12 race cards.
 type RaceCard struct {
-	SpecialName   string `json:"-"`
-	SpecialNameEN string `json:"-"`
-	Num           int    `json:"num"`
-	Grade       Grade    `json:"grade"`
-	AgeGroup    AgeGroup `json:"ageGroup"`
-	Surface     Surface  `json:"surface"`
-	Distance    int      `json:"distance"`
-	Runners     int      `json:"runners"`
+	SpecialName   string   `json:"-"`
+	SpecialNameEN string   `json:"-"`
+	Num           int      `json:"num"`
+	Grade         Grade    `json:"grade"`
+	AgeGroup      AgeGroup `json:"ageGroup"`
+	Surface       Surface  `json:"surface"`
+	Distance      int      `json:"distance"`
+	Runners       int      `json:"runners"`
 	// CNAME is an opaque identifier assigned by JRA to reference this race card.
 	// It is extracted from href attributes in the HTML and used as a GET query parameter
 	// to fetch the race result.
-	CNAME       string   `json:"cname"`
-	Fixture     *Fixture `json:"fixture"`
+	CNAME   string   `json:"cname"`
+	Fixture *Fixture `json:"fixture"`
 }
 
 func (rc *RaceCard) DisplayName() string {

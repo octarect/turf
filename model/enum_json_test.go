@@ -125,10 +125,10 @@ func TestStructuredJSONUsesLabels(t *testing.T) {
 
 func TestRaceCardDisplayName(t *testing.T) {
 	tests := []struct {
-		name       string
-		rc         RaceCard
-		wantEN     string
-		wantJP     string
+		name   string
+		rc     RaceCard
+		wantEN string
+		wantJP string
 	}{
 		{
 			name:   "special name",
