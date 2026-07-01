@@ -17,8 +17,9 @@ import (
 )
 
 type raceResultPage struct {
-	Weather weather `xpath:"normalize-space(//div[@class='cell baba']/ul/li[@class='weather']//span[@class='txt']/text())"`
-	Going   going   `xpath:"normalize-space(//div[@class='cell baba']/ul/li[@class='turf' or @class='durt']//span[@class='txt']/text())"`
+	Weather    weather    `xpath:"normalize-space(//div[@class='cell baba']/ul/li[@class='weather']//span[@class='txt']/text())"`
+	Going      going      `xpath:"normalize-space(//div[@class='cell baba']/ul/li[@class='turf' or @class='durt']//span[@class='txt']/text())"`
+	FemaleOnly femaleOnly `xpath:"//div[@class='cell rule']"`
 
 	PostTime struct {
 		Hour   int `xpath:"replace(//text(), '(.+)時(.+)分', '$1')"`
@@ -111,6 +112,13 @@ func (g *going) OfSurface(surface model.Surface) model.Going {
 		return model.Going(*g + 1)
 	}
 	return model.Going(*g)
+}
+
+type femaleOnly model.FemaleOnly
+
+func (fo *femaleOnly) UnmarshalXPath(text []byte) error {
+	*fo = femaleOnly(strings.Contains(string(text), "牝"))
+	return nil
 }
 
 type lapTimes []float64
@@ -503,6 +511,7 @@ func (c *JRAClient) GetRaceResult(ctx context.Context, raceCard *model.RaceCard)
 	return &model.RaceResult{
 		RaceCard:         raceCard,
 		Going:            page.Going.OfSurface(raceCard.Surface),
+		FemaleOnly:       model.FemaleOnly(page.FemaleOnly),
 		Weather:          model.Weather(page.Weather),
 		PostTime:         postTime,
 		Entries:          entries,

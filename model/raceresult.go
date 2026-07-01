@@ -13,6 +13,7 @@ type RaceResult struct {
 
 	Going            Going             `json:"going"`
 	Weather          Weather           `json:"weather"`
+	FemaleOnly       FemaleOnly        `json:"femaleOnly"`
 	PostTime         time.Time         `json:"postTime"`
 	Entries          []Entry           `json:"entries"`
 	LapTimes         []float64         `json:"lapTimes"`
@@ -88,6 +89,8 @@ func (g Going) String() string {
 func (g Going) MarshalJSON() ([]byte, error) {
 	return json.Marshal(g.String())
 }
+
+type FemaleOnly bool
 
 type FinishStatus int
 
