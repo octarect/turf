@@ -83,6 +83,7 @@ type resultOpts struct {
 	GoingClass       string
 	GoingText        string
 	FemaleOnly       string
+	WeightRule       string
 	PostTime         string
 	LapTimes         string
 	CornerFormations []cornerFormationHTML
@@ -127,6 +128,7 @@ func raceResultPageHTML(opts resultOpts) string {
 		`<li class="`, opts.GoingClass, `"><span class="txt">`, opts.GoingText, `</span></li>`,
 		`</ul></div>`,
 		`<div class="cell rule">`, opts.FemaleOnly, `</div>`,
+		`<div class="cell weight">`, opts.WeightRule, `</div>`,
 		`<div class="cell time"><strong>`, opts.PostTime, `</strong></div>`,
 		`<div class="result_time_data"><table><tbody><tr><td>`, opts.LapTimes, `</td></tr></tbody></table></div>`,
 		`<div class="result_corner_place"><table><tbody>`,

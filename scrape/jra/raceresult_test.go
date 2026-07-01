@@ -123,6 +123,38 @@ func TestFemaleOnlyUnmarshalXPath(t *testing.T) {
 	}
 }
 
+func TestWeightRuleUnmarshalXPath(t *testing.T) {
+	tests := []struct {
+		name    string
+		input   string
+		want    model.WeightRule
+		wantErr bool
+	}{
+		{"age", "馬齢", model.WeightRuleAge, false},
+		{"special (別定)", "別定", model.WeightRuleSpecial, false},
+		{"special (定量)", "定量", model.WeightRuleSpecial, false},
+		{"handicap", "ハンデ", model.WeightRuleHandicap, false},
+		{"with whitespace", "  馬齢  ", model.WeightRuleAge, false},
+		{"invalid", "不明", 0, true},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			var got weightRule
+			err := got.UnmarshalXPath([]byte(tt.input))
+			if (err != nil) != tt.wantErr {
+				t.Fatalf("wantErr = %v, error = %v", tt.wantErr, err)
+			}
+			if tt.wantErr {
+				return
+			}
+			if diff := cmp.Diff(weightRule(tt.want), got); diff != "" {
+				t.Fatalf("weightRule mismatch (-want +got):\n%s", diff)
+			}
+		})
+	}
+}
+
 func TestLapTimesUnmarshalXPath(t *testing.T) {
 	tests := []struct {
 		name    string
@@ -372,6 +404,7 @@ func TestGetRaceResult(t *testing.T) {
 		GoingClass: "turf",
 		GoingText:  "良",
 		FemaleOnly: "混合",
+		WeightRule: "馬齢",
 		PostTime:   "15時40分",
 		LapTimes:   "12.5 - 11.8 - 12.0",
 		CornerFormations: []cornerFormationHTML{
@@ -460,6 +493,7 @@ func TestGetRaceResult(t *testing.T) {
 		Going:      model.GoingTurfGoodToFirm,
 		Weather:    model.WeatherFine,
 		FemaleOnly: false,
+		WeightRule: model.WeightRuleAge,
 		PostTime:   time.Date(2026, 5, 3, 15, 40, 0, 0, timeJST),
 		LapTimes:   []float64{12.5, 11.8, 12.0},
 		CornerFormations: []model.CornerFormation{

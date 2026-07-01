@@ -14,6 +14,7 @@ type RaceResult struct {
 	Going            Going             `json:"going"`
 	Weather          Weather           `json:"weather"`
 	FemaleOnly       FemaleOnly        `json:"femaleOnly"`
+	WeightRule       WeightRule        `json:"weightRule"`
 	PostTime         time.Time         `json:"postTime"`
 	Entries          []Entry           `json:"entries"`
 	LapTimes         []float64         `json:"lapTimes"`
@@ -91,6 +92,14 @@ func (g Going) MarshalJSON() ([]byte, error) {
 }
 
 type FemaleOnly bool
+
+type WeightRule int
+
+const (
+	WeightRuleAge      WeightRule = iota // 馬齢
+	WeightRuleSpecial                    // 定量・別定
+	WeightRuleHandicap                   // ハンデキャップ
+)
 
 type FinishStatus int
 

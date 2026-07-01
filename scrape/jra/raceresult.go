@@ -20,6 +20,7 @@ type raceResultPage struct {
 	Weather    weather    `xpath:"normalize-space(//div[@class='cell baba']/ul/li[@class='weather']//span[@class='txt']/text())"`
 	Going      going      `xpath:"normalize-space(//div[@class='cell baba']/ul/li[@class='turf' or @class='durt']//span[@class='txt']/text())"`
 	FemaleOnly femaleOnly `xpath:"//div[@class='cell rule']"`
+	WeightRule weightRule `xpath:"//div[@class='cell weight']"`
 
 	PostTime struct {
 		Hour   int `xpath:"replace(//text(), '(.+)時(.+)分', '$1')"`
@@ -118,6 +119,23 @@ type femaleOnly model.FemaleOnly
 
 func (fo *femaleOnly) UnmarshalXPath(text []byte) error {
 	*fo = femaleOnly(strings.Contains(string(text), "牝"))
+	return nil
+}
+
+type weightRule model.WeightRule
+
+func (wg *weightRule) UnmarshalXPath(text []byte) error {
+	s := strings.TrimSpace(string(text))
+	switch s {
+	case "馬齢":
+		*wg = weightRule(model.WeightRuleAge)
+	case "別定", "定量":
+		*wg = weightRule(model.WeightRuleSpecial)
+	case "ハンデ":
+		*wg = weightRule(model.WeightRuleHandicap)
+	default:
+		return fmt.Errorf("unknown weight rule found. text=%s", s)
+	}
 	return nil
 }
 
@@ -512,6 +530,7 @@ func (c *JRAClient) GetRaceResult(ctx context.Context, raceCard *model.RaceCard)
 		RaceCard:         raceCard,
 		Going:            page.Going.OfSurface(raceCard.Surface),
 		FemaleOnly:       model.FemaleOnly(page.FemaleOnly),
+		WeightRule:       model.WeightRule(page.WeightRule),
 		Weather:          model.Weather(page.Weather),
 		PostTime:         postTime,
 		Entries:          entries,
