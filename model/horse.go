@@ -8,7 +8,7 @@ type HorseSex int
 
 const (
 	HorseSexMale HorseSex = iota
-	HorseSexMare
+	HorseSexFemale
 	HorseSexGelding
 )
 
@@ -16,8 +16,8 @@ func (s HorseSex) String() string {
 	switch s {
 	case HorseSexMale:
 		return "male"
-	case HorseSexMare:
-		return "mare"
+	case HorseSexFemale:
+		return "female"
 	case HorseSexGelding:
 		return "gelding"
 	}

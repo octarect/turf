@@ -98,6 +98,63 @@ func TestGoingOfSurface(t *testing.T) {
 	}
 }
 
+func TestFemaleOnlyUnmarshalXPath(t *testing.T) {
+	tests := []struct {
+		name  string
+		input string
+		want  model.FemaleOnly
+	}{
+		{"female only", "牝", true},
+		{"mixed", "混合", false},
+		{"empty", "", false},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			var got femaleOnly
+			err := got.UnmarshalXPath([]byte(tt.input))
+			if err != nil {
+				t.Fatalf("unexpected error: %v", err)
+			}
+			if diff := cmp.Diff(femaleOnly(tt.want), got); diff != "" {
+				t.Fatalf("femaleOnly mismatch (-want +got):\n%s", diff)
+			}
+		})
+	}
+}
+
+func TestWeightRuleUnmarshalXPath(t *testing.T) {
+	tests := []struct {
+		name    string
+		input   string
+		want    model.WeightRule
+		wantErr bool
+	}{
+		{"age", "馬齢", model.WeightRuleAge, false},
+		{"special (別定)", "別定", model.WeightRuleSpecial, false},
+		{"special (定量)", "定量", model.WeightRuleSpecial, false},
+		{"handicap", "ハンデ", model.WeightRuleHandicap, false},
+		{"with whitespace", "  馬齢  ", model.WeightRuleAge, false},
+		{"invalid", "不明", 0, true},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			var got weightRule
+			err := got.UnmarshalXPath([]byte(tt.input))
+			if (err != nil) != tt.wantErr {
+				t.Fatalf("wantErr = %v, error = %v", tt.wantErr, err)
+			}
+			if tt.wantErr {
+				return
+			}
+			if diff := cmp.Diff(weightRule(tt.want), got); diff != "" {
+				t.Fatalf("weightRule mismatch (-want +got):\n%s", diff)
+			}
+		})
+	}
+}
+
 func TestLapTimesUnmarshalXPath(t *testing.T) {
 	tests := []struct {
 		name    string
@@ -135,7 +192,7 @@ func TestHorseSexUnmarshalXPath(t *testing.T) {
 		wantErr bool
 	}{
 		{"male", "牡", model.HorseSexMale, false},
-		{"mare", "牝", model.HorseSexMare, false},
+		{"femare", "牝", model.HorseSexFemale, false},
 		{"gelding", "セ", model.HorseSexGelding, false},
 		{"invalid", "騸", 0, true},
 	}
@@ -346,6 +403,8 @@ func TestGetRaceResult(t *testing.T) {
 		Weather:    "晴",
 		GoingClass: "turf",
 		GoingText:  "良",
+		FemaleOnly: "混合",
+		WeightRule: "馬齢",
 		PostTime:   "15時40分",
 		LapTimes:   "12.5 - 11.8 - 12.0",
 		CornerFormations: []cornerFormationHTML{
@@ -430,11 +489,13 @@ func TestGetRaceResult(t *testing.T) {
 
 	timeJST := time.FixedZone("Asia/Tokyo", 9*60*60)
 	want := &model.RaceResult{
-		RaceCard: raceCard,
-		Going:    model.GoingTurfGoodToFirm,
-		Weather:  model.WeatherFine,
-		PostTime: time.Date(2026, 5, 3, 15, 40, 0, 0, timeJST),
-		LapTimes: []float64{12.5, 11.8, 12.0},
+		RaceCard:   raceCard,
+		Going:      model.GoingTurfGoodToFirm,
+		Weather:    model.WeatherFine,
+		FemaleOnly: false,
+		WeightRule: model.WeightRuleAge,
+		PostTime:   time.Date(2026, 5, 3, 15, 40, 0, 0, timeJST),
+		LapTimes:   []float64{12.5, 11.8, 12.0},
 		CornerFormations: []model.CornerFormation{
 			{Corner: 3, Formation: "5-10-2"},
 			{Corner: 4, Formation: "2-5-10"},
@@ -486,7 +547,7 @@ func TestGetRaceResult(t *testing.T) {
 				WinFavorite: 3,
 				Horse: model.EntryHorse{
 					Name:       "テストホース2",
-					Sex:        model.HorseSexMare,
+					Sex:        model.HorseSexFemale,
 					Age:        4,
 					Weight:     460,
 					WeightDiff: 0,

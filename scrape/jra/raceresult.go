@@ -17,8 +17,10 @@ import (
 )
 
 type raceResultPage struct {
-	Weather weather `xpath:"normalize-space(//div[@class='cell baba']/ul/li[@class='weather']//span[@class='txt']/text())"`
-	Going   going   `xpath:"normalize-space(//div[@class='cell baba']/ul/li[@class='turf' or @class='durt']//span[@class='txt']/text())"`
+	Weather    weather    `xpath:"normalize-space(//div[@class='cell baba']/ul/li[@class='weather']//span[@class='txt']/text())"`
+	Going      going      `xpath:"normalize-space(//div[@class='cell baba']/ul/li[@class='turf' or @class='durt']//span[@class='txt']/text())"`
+	FemaleOnly femaleOnly `xpath:"//div[@class='cell rule']"`
+	WeightRule weightRule `xpath:"//div[@class='cell weight']"`
 
 	PostTime struct {
 		Hour   int `xpath:"replace(//text(), '(.+)時(.+)分', '$1')"`
@@ -113,6 +115,30 @@ func (g *going) OfSurface(surface model.Surface) model.Going {
 	return model.Going(*g)
 }
 
+type femaleOnly model.FemaleOnly
+
+func (fo *femaleOnly) UnmarshalXPath(text []byte) error {
+	*fo = femaleOnly(strings.Contains(string(text), "牝"))
+	return nil
+}
+
+type weightRule model.WeightRule
+
+func (wg *weightRule) UnmarshalXPath(text []byte) error {
+	s := strings.TrimSpace(string(text))
+	switch s {
+	case "馬齢":
+		*wg = weightRule(model.WeightRuleAge)
+	case "別定", "定量":
+		*wg = weightRule(model.WeightRuleSpecial)
+	case "ハンデ":
+		*wg = weightRule(model.WeightRuleHandicap)
+	default:
+		return fmt.Errorf("unknown weight rule found. text=%s", s)
+	}
+	return nil
+}
+
 type lapTimes []float64
 
 func (ts *lapTimes) UnmarshalXPath(lapTimesStr []byte) error {
@@ -143,7 +169,7 @@ func (hs *horseSex) UnmarshalXPath(text []byte) error {
 	case "牡":
 		hs0 = model.HorseSexMale
 	case "牝":
-		hs0 = model.HorseSexMare
+		hs0 = model.HorseSexFemale
 	case "セ", "せん":
 		hs0 = model.HorseSexGelding
 	default:
@@ -503,6 +529,8 @@ func (c *JRAClient) GetRaceResult(ctx context.Context, raceCard *model.RaceCard)
 	return &model.RaceResult{
 		RaceCard:         raceCard,
 		Going:            page.Going.OfSurface(raceCard.Surface),
+		FemaleOnly:       model.FemaleOnly(page.FemaleOnly),
+		WeightRule:       model.WeightRule(page.WeightRule),
 		Weather:          model.Weather(page.Weather),
 		PostTime:         postTime,
 		Entries:          entries,

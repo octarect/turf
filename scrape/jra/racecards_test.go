@@ -24,8 +24,8 @@ func TestRaceNameUnmarshalXPath(t *testing.T) {
 		{"fullwidth paren", "障害4歳以上オープン（混合）", "障害4歳以上オープン", false},
 		{"fullwidth bracket", "2歳新馬［指定］", "2歳新馬", false},
 		{"fullwidth paren and bracket", "3歳以上オープン（国際）（特指）", "3歳以上オープン", false},
-		{"mare(suffix)", "3歳未勝利牝［指定］", "3歳未勝利", false},
-		{"mare(middle)", "府中牝馬S", "府中牝馬S", false},
+		{"femare(suffix)", "3歳未勝利牝［指定］", "3歳未勝利", false},
+		{"femare(middle)", "府中牝馬S", "府中牝馬S", false},
 		{"emperror", "天皇賞(春)", "天皇賞(春)", false},
 		{"spaces", " 4歳以上3勝クラス[指定]", "4歳以上3勝クラス", false},
 	}
