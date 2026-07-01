@@ -43,6 +43,11 @@ func (c *Client) SetBaseURL(u *url.URL) {
 	c.baseURL = u
 }
 
+// SetUserAgent overrides the User-Agent header sent with each request.
+func (c *Client) SetUserAgent(ua string) {
+	c.userAgent = ua
+}
+
 // NewRequest resolves urlStr against baseURL and returns a new http.Request with the specified method and body.
 func (c *Client) NewRequest(method, urlStr string, body io.Reader) (*http.Request, error) {
 	if !strings.HasSuffix(c.baseURL.Path, "/") {
