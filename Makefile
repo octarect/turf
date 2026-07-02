@@ -1,3 +1,5 @@
+BUILD_LDFLAGS="-s -w"
+
 .PHONY: all
 all: clean build
 
@@ -14,4 +16,4 @@ test:
 	go test -v ./...
 
 bin/turf:
-	go build -o ./bin/turf ./cmd/turf
+	go build -o ./bin/turf -ldflags=$(BUILD_LDFLAGS) -trimpath ./cmd/turf
