@@ -1,7 +1,5 @@
 # turf
 
-[![Go Report Card](https://goreportcard.com/badge/github.com/octarect/turf)](https://goreportcard.com/report/github.com/octarect/turf)
-
 CLI tool for fetching JRA (Japan Racing Association) horse racing data.
 
 ## Installation
