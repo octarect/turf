@@ -93,6 +93,7 @@ type resultOpts struct {
 type cornerFormationHTML struct {
 	Corner    int
 	Formation string
+	SecondLap bool
 }
 
 type entryHTML struct {
@@ -117,8 +118,9 @@ type entryHTML struct {
 }
 
 type cornerPositionHTML struct {
-	Corner   int
-	Position int
+	Corner    int
+	Position  int
+	SecondLap bool
 }
 
 func raceResultPageHTML(opts resultOpts) string {
@@ -135,10 +137,14 @@ func raceResultPageHTML(opts resultOpts) string {
 	}
 
 	for _, cf := range opts.CornerFormations {
+		label := strconv.Itoa(cf.Corner) + "コーナー"
+		if cf.SecondLap {
+			label += "(2周目)"
+		}
 		doc = append(doc,
 			`<tr><th>`,
-			strconv.Itoa(cf.Corner),
-			`コーナー</th><td>`,
+			label,
+			`</th><td>`,
 			cf.Formation,
 			`</td></tr>`,
 		)
@@ -186,10 +192,14 @@ func entryRowHTML(e entryHTML) string {
 	)
 
 	for _, cp := range e.Corners {
+		title := strconv.Itoa(cp.Corner) + "コーナー通過順位"
+		if cp.SecondLap {
+			title += "(2周目)"
+		}
 		doc = append(doc,
 			`<li title="`,
-			strconv.Itoa(cp.Corner),
-			`コーナー通過順位">`,
+			title,
+			`">`,
 			strconv.Itoa(cp.Position),
 			`</li>`,
 		)

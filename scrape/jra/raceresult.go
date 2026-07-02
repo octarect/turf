@@ -30,7 +30,7 @@ type raceResultPage struct {
 	LapTimes lapTimes `xpath:"normalize-space(//div[contains(@class, 'result_time_data')]/table/tbody/tr[1]/td/text())"`
 
 	CornerFormations []struct {
-		Corner    int    `xpath:"replace(//th, '(\\d)コーナー', '$1')"`
+		Corner    int    `xpath:"replace(//th, '(\\d)コーナー.*', '$1')"`
 		Formation string `xpath:"normalize-space(//td)"`
 	} `xpath:"//div[contains(@class, 'result_corner_place')]/table/tbody/tr"`
 
@@ -56,7 +56,7 @@ type raceResultPage struct {
 		FinishTime      finishTime `xpath:"//td[@class='time']"`
 		Margin          margin     `xpath:"normalize-space(//td[@class='margin']/text())"`
 		CornerPositions []struct {
-			Corner   int            `xpath:"replace(//@title, '([0-9])コーナー通過順位', '$1')"`
+			Corner   int            `xpath:"replace(//@title, '([0-9])コーナー通過順位.*', '$1')"`
 			Position cornerPosition `xpath:"normalize-space(//text())"`
 		} `xpath:"//td[@class='corner']/div/ul/li"`
 		Last3F      optionalFloat64 `xpath:"//td[@class='f_time']/text()"`
