@@ -602,3 +602,144 @@ func TestGetRaceResult(t *testing.T) {
 		t.Fatalf("GetRaceResult mismatch (-want +got):\n%s", diff)
 	}
 }
+
+func TestGetRaceResult_TwoLaps(t *testing.T) {
+	client, mux := setup(t)
+
+	var html string
+	mux.HandleFunc("/JRADB/accessS.html", func(w http.ResponseWriter, r *http.Request) {
+		writeShiftJIS(t, w, html)
+	})
+
+	fixture := &model.Fixture{
+		Course: model.CourseHanshin,
+		Year:   2022,
+		Season: 2,
+		Day:    1,
+		Date:   model.Date{Time: time.Date(2022, 5, 1, 0, 0, 0, 0, time.UTC)},
+		CNAME:  "pw01fix01",
+	}
+
+	raceCard := &model.RaceCard{
+		SpecialName: "阪神大賞典",
+		Num:         11,
+		Grade:       model.GradeG2,
+		AgeGroup:    model.AgeGroup4Plus,
+		Surface:     model.SurfaceTurf,
+		Distance:    3000,
+		Runners:     16,
+		CNAME:       "pw01race11",
+		Fixture:     fixture,
+	}
+
+	html = raceResultPageHTML(resultOpts{
+		Weather:    "晴",
+		GoingClass: "turf",
+		GoingText:  "良",
+		FemaleOnly: "混合",
+		WeightRule: "馬齢",
+		PostTime:   "15時45分",
+		LapTimes:   "13.0 - 12.5 - 12.0",
+		CornerFormations: []cornerFormationHTML{
+			{Corner: 1, Formation: "5-10-2"},
+			{Corner: 2, Formation: "5-10-2"},
+			{Corner: 3, Formation: "5-10-2"},
+			{Corner: 4, Formation: "5-10-2"},
+			{Corner: 3, Formation: "10-5-2", SecondLap: true},
+			{Corner: 4, Formation: "10-2-5", SecondLap: true},
+		},
+		Entries: []entryHTML{
+			{
+				FinishPosition: "1",
+				Bracket:        5,
+				HorseNo:        10,
+				HorseName:      "テストホース1",
+				HorseCNAME:     "pw01dby012022000001/A1",
+				SexAge:         "牡4",
+				Weight:         "57",
+				JockeyName:     "テスト騎手",
+				JockeyCNAME:    "pw01jockey01",
+				FinishTime:     "3:04.5",
+				Margin:         "",
+				Corners: []cornerPositionHTML{
+					{Corner: 1, Position: 5},
+					{Corner: 2, Position: 5},
+					{Corner: 3, Position: 5},
+					{Corner: 4, Position: 5},
+					{Corner: 3, Position: 2, SecondLap: true},
+					{Corner: 4, Position: 1, SecondLap: true},
+				},
+				Last3F:       "36.0",
+				HorseWeight:  "490(0)",
+				TrainerName:  "テスト調教師",
+				TrainerCNAME: "pw01trainer01",
+				WinFavorite:  1,
+			},
+		},
+	})
+
+	got, err := client.GetRaceResult(context.Background(), raceCard)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	timeJST := time.FixedZone("Asia/Tokyo", 9*60*60)
+	want := &model.RaceResult{
+		RaceCard:   raceCard,
+		Going:      model.GoingTurfGoodToFirm,
+		Weather:    model.WeatherFine,
+		FemaleOnly: false,
+		WeightRule: model.WeightRuleAge,
+		PostTime:   time.Date(2022, 5, 1, 15, 45, 0, 0, timeJST),
+		LapTimes:   []float64{13.0, 12.5, 12.0},
+		CornerFormations: []model.CornerFormation{
+			{Corner: 1, Formation: "5-10-2"},
+			{Corner: 2, Formation: "5-10-2"},
+			{Corner: 3, Formation: "5-10-2"},
+			{Corner: 4, Formation: "5-10-2"},
+			{Corner: 3, Formation: "10-5-2"},
+			{Corner: 4, Formation: "10-2-5"},
+		},
+		Entries: []model.Entry{
+			{
+				Finish:     model.Finish{Position: 1, Status: model.FinishStatusNormal},
+				Bracket:    5,
+				Num:        10,
+				Weight:     57,
+				FinishTime: 184.5,
+				Margin:     model.Margin{},
+				Last3F:     36.0,
+				CornerPositions: []model.CornerPosition{
+					{Corner: 1, Position: 5},
+					{Corner: 2, Position: 5},
+					{Corner: 3, Position: 5},
+					{Corner: 4, Position: 5},
+					{Corner: 3, Position: 2},
+					{Corner: 4, Position: 1},
+				},
+				WinFavorite: 1,
+				Horse: model.EntryHorse{
+					Name:       "テストホース1",
+					Sex:        model.HorseSexMale,
+					Age:        4,
+					Weight:     490,
+					WeightDiff: 0,
+					ID:         "2022000001",
+					CNAME:      "pw01dby012022000001/A1",
+				},
+				Jockey: model.EntryJockey{
+					Name:  "テスト騎手",
+					CNAME: "pw01jockey01",
+				},
+				Trainer: model.EntryTrainer{
+					Name:  "テスト調教師",
+					CNAME: "pw01trainer01",
+				},
+			},
+		},
+	}
+
+	if diff := cmp.Diff(want, got); diff != "" {
+		t.Fatalf("GetRaceResult mismatch (-want +got):\n%s", diff)
+	}
+}
