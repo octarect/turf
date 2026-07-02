@@ -10,6 +10,8 @@ CLI tool for fetching JRA (Japan Racing Association) horse racing data.
 go install github.com/octarect/turf/cmd/turf@latest
 ```
 
+Or download a pre-built binary from [GitHub Releases](https://github.com/octarect/turf/releases).
+
 ## Usage
 
 ### List fixtures
@@ -17,6 +19,12 @@ go install github.com/octarect/turf/cmd/turf@latest
 ```sh
 turf fixtures --month 2025-06
 turf fixtures --date 2025-06-01 --course tokyo
+```
+
+### List races
+
+```sh
+turf races --date 2025-06-01 --course tokyo
 ```
 
 ### List races
