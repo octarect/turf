@@ -22,7 +22,9 @@ jobs:
         env:
           GOOS: ${{ matrix.goos }}
           GOARCH: ${{ matrix.goarch }}
-        run: go build -o turf-${{ matrix.goos }}-${{ matrix.goarch }} ./cmd/turf/
+        run: |
+          make
+          mv bin/turf turf-${{ matrix.goos }}-${{ matrix.goarch }}
       - uses: actions/upload-artifact@v4
         with:
           name: turf-${{ matrix.goos }}-${{ matrix.goarch }}
