@@ -148,6 +148,24 @@ func TestRaceCardDisplayName(t *testing.T) {
 			wantEN: "3yo g1",
 			wantJP: "日本ダービー",
 		},
+		{
+			name:   "jump without special name",
+			rc:     RaceCard{AgeGroup: AgeGroup4Plus, Grade: Grade0W, Surface: SurfaceJump},
+			wantEN: "4yo_plus maiden jump",
+			wantJP: "障害4歳以上未勝利",
+		},
+		{
+			name:   "jump with special name",
+			rc:     RaceCard{SpecialName: "中山グランドジャンプ", AgeGroup: AgeGroup4Plus, Grade: GradeJG1, Surface: SurfaceJump},
+			wantEN: "4yo_plus jg1 jump",
+			wantJP: "中山グランドジャンプ",
+		},
+		{
+			name:   "jump with special name EN",
+			rc:     RaceCard{SpecialName: "中山グランドジャンプ", SpecialNameEN: "Grand Jump", AgeGroup: AgeGroup4Plus, Grade: GradeJG1, Surface: SurfaceJump},
+			wantEN: "Grand Jump",
+			wantJP: "中山グランドジャンプ",
+		},
 	}
 
 	for _, tt := range tests {

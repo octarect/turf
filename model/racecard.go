@@ -24,14 +24,22 @@ func (rc *RaceCard) DisplayName() string {
 	if rc.SpecialNameEN != "" {
 		return rc.SpecialNameEN
 	}
-	return rc.AgeGroup.String() + " " + rc.Grade.String()
+	s := rc.AgeGroup.String() + " " + rc.Grade.String()
+	if rc.Surface == SurfaceJump {
+		s += " jump"
+	}
+	return s
 }
 
 func (rc *RaceCard) DisplayNameJP() string {
 	if rc.SpecialName != "" {
 		return rc.SpecialName
 	}
-	return rc.AgeGroup.StringJP() + rc.Grade.StringJP()
+	s := rc.AgeGroup.StringJP() + rc.Grade.StringJP()
+	if rc.Surface == SurfaceJump {
+		s = "障害" + s
+	}
+	return s
 }
 
 func (rc *RaceCard) MarshalJSON() ([]byte, error) {
