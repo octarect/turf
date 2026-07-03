@@ -21,7 +21,9 @@ func TestWeatherUnmarshalXPath(t *testing.T) {
 		{"cloudy", "曇", model.WeatherCloudy, false},
 		{"drizzle", "小雨", model.WeatherDrizzle, false},
 		{"rainy", "雨", model.WeatherRainy, false},
-		{"invalid", "雪", 0, true},
+		{"light snow", "小雪", model.WeatherLightSnow, false},
+		{"snow", "雪", model.WeatherSnow, false},
+		{"invalid", "霧", 0, true},
 	}
 
 	for _, tt := range tests {

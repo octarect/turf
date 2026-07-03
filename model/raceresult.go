@@ -28,6 +28,8 @@ const (
 	WeatherCloudy
 	WeatherDrizzle
 	WeatherRainy
+	WeatherLightSnow
+	WeatherSnow
 )
 
 func (w Weather) String() string {
@@ -40,6 +42,10 @@ func (w Weather) String() string {
 		return "drizzle"
 	case WeatherRainy:
 		return "rainy"
+	case WeatherLightSnow:
+		return "light_snow"
+	case WeatherSnow:
+		return "snow"
 	}
 
 	return "invalid"

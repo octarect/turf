@@ -81,6 +81,10 @@ func (w *weather) UnmarshalXPath(text []byte) error {
 		*w = weather(model.WeatherDrizzle)
 	case "雨":
 		*w = weather(model.WeatherRainy)
+	case "小雪":
+		*w = weather(model.WeatherLightSnow)
+	case "雪":
+		*w = weather(model.WeatherSnow)
 	default:
 		return fmt.Errorf("unknown weather type found. text=%s", string(text))
 	}
