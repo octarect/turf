@@ -376,6 +376,8 @@ func parseFraction(s string) (float64, error) {
 	return w + n/d, nil
 }
 
+var regexpDemotion = regexp.MustCompile(`^\([0-9]+位降着\)$`)
+
 // UnmarshalXPath parses a Japanese margin string into a Margin value.
 // Named margins map to MarginKind constants:
 //
@@ -383,6 +385,7 @@ func parseFraction(s string) (float64, error) {
 //
 // Numeric margins (including mixed fractions like "1 1/2") are parsed via parseFraction.
 // An empty string indicates the race winner (no margin).
+// Demotion annotations like "(2位降着)" are ignored (margin is left as zero value).
 func (m *margin) UnmarshalXPath(marginStr []byte) error {
 	s := string(marginStr)
 
@@ -404,6 +407,9 @@ func (m *margin) UnmarshalXPath(marginStr []byte) error {
 	case "大差":
 		kind = model.MarginKindDistance
 	default:
+		if regexpDemotion.MatchString(s) {
+			return nil
+		}
 		var err error
 		length, err = parseFraction(s)
 		if err != nil {
