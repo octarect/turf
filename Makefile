@@ -1,4 +1,5 @@
 BUILD_LDFLAGS="-s -w"
+GO_SRCS := $(shell find . -name '*.go' -not -path './vendor/*')
 
 .PHONY: all
 all: clean build
@@ -15,5 +16,6 @@ clean:
 test:
 	go test -v ./...
 
-bin/turf:
+bin/turf: $(GO_SRCS)
 	go build -o ./bin/turf -ldflags=$(BUILD_LDFLAGS) -trimpath ./cmd/turf
+
