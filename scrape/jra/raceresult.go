@@ -147,7 +147,8 @@ func (ts *lapTimes) UnmarshalXPath(lapTimesStr []byte) error {
 		s0 := strings.TrimSpace(s)
 		lapTime, err := strconv.ParseFloat(s0, 64)
 		if err != nil {
-			return fmt.Errorf("invalid lap time found. lapTime=%s", string(lapTimesStr))
+			*ts = lapTimes{}
+			return nil
 		}
 		*ts = append(*ts, lapTime)
 	}
