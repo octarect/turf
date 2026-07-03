@@ -1,5 +1,7 @@
 # turf
 
+[![CI](https://github.com/octarect/turf/actions/workflows/ci.yml/badge.svg)](https://github.com/octarect/turf/actions/workflows/ci.yml)
+
 CLI tool for fetching JRA (Japan Racing Association) horse racing data.
 
 ## Installation
