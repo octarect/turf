@@ -287,6 +287,7 @@ func TestMarginUnmarshalXPath(t *testing.T) {
 		{"neck", "クビ", model.Margin{Kind: model.MarginKindNeck}, false},
 		{"distance", "大差", model.Margin{Kind: model.MarginKindDistance}, false},
 		{"1 1/2", "1 1/2", model.Margin{Kind: model.MarginKindLength, Length: 1.5}, false},
+		{"demotion", "(2位降着)", model.Margin{}, false},
 		{"invalid", "???", model.Margin{}, true},
 	}
 
