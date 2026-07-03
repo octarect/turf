@@ -192,14 +192,15 @@ func (k MarginKind) MarshalJSON() ([]byte, error) {
 }
 
 type EntryHorse struct {
-	ID         HorseID  `json:"id"`
-	Name       string   `json:"name"`
-	NameEN     string   `json:"nameEN,omitempty"`
-	Sex        HorseSex `json:"sex"`
-	Age        int      `json:"age"`
-	Weight     int      `json:"weight"`
-	WeightDiff int      `json:"weightDiff"`
-	CNAME      string   `json:"cname"`
+	ID     HorseID  `json:"id"`
+	Name   string   `json:"name"`
+	NameEN string   `json:"nameEN,omitempty"`
+	Sex    HorseSex `json:"sex"`
+	Age    int      `json:"age"`
+	// Weight is the horse's body weight in kg. 0 means unavailable (not measured or not recorded).
+	Weight     int    `json:"weight"`
+	WeightDiff int    `json:"weightDiff"`
+	CNAME      string `json:"cname"`
 }
 
 type EntryJockey struct {

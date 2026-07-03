@@ -318,6 +318,7 @@ func TestHorseWeightUnmarshalXPath(t *testing.T) {
 		{"zero diff", "480(0)", horseWeight{Weight: 480, Diff: 0}, false},
 		{"first run", "480(初出走)", horseWeight{Weight: 480, Diff: 0, Other: "初出走"}, false},
 		{"no diff", "480", horseWeight{Weight: 480, Diff: 0}, false},
+		{"empty", " ", horseWeight{}, false},
 		{"invalid", "abc", horseWeight{}, true},
 	}
 
