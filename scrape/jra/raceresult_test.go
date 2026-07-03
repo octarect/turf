@@ -465,7 +465,7 @@ func TestGetRaceResult(t *testing.T) {
 				HorseNo:        14,
 				HorseName:      "テストホース3",
 				HorseCNAME:     "pw01dby012023000003/C3",
-				SexAge:         "牡5",
+				SexAge:         "牡10",
 				Weight:         "57",
 				JockeyName:     "リンク無し騎手",
 				JockeyCNAME:    "",
@@ -582,7 +582,7 @@ func TestGetRaceResult(t *testing.T) {
 				Horse: model.EntryHorse{
 					Name:       "テストホース3",
 					Sex:        model.HorseSexMale,
-					Age:        5,
+					Age:        10,
 					Weight:     500,
 					WeightDiff: -4,
 					ID:         "2023000003",
