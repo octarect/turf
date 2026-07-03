@@ -164,7 +164,8 @@ func TestLapTimesUnmarshalXPath(t *testing.T) {
 	}{
 		{"hyphen-joined", "12.5 - 11.8 - 12.0", lapTimes{12.5, 11.8, 12.0}, false},
 		{"single", "12.3", lapTimes{12.3}, false},
-		{"invalid", "abc", nil, true},
+		{"invalid", "abc", lapTimes{}, false},
+		{"jump_mile_format", "1マイル 1分49秒3 4F 55.5 - 3F 41.8", lapTimes{}, false},
 	}
 
 	for _, tt := range tests {

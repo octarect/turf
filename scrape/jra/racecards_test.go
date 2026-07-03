@@ -211,6 +211,44 @@ func TestListRaceCards(t *testing.T) {
 			},
 		},
 		{
+			name: "jump race (障害 in name)",
+			html: racePageHTML(
+				raceRowHTML(4, "障害4歳以上未勝利", "", "", "3000", "芝", 10, "pw01race04"),
+			),
+			want: []*model.RaceCard{
+				{
+					SpecialName: "",
+					Num:         4,
+					Grade:       model.Grade0W,
+					AgeGroup:    model.AgeGroup4Plus,
+					Surface:     model.SurfaceJump,
+					Distance:    3000,
+					Runners:     10,
+					CNAME:       "pw01race04",
+					Fixture:     fixture,
+				},
+			},
+		},
+		{
+			name: "jump race (障害 in subName)",
+			html: racePageHTML(
+				raceRowHTML(11, "中山グランドジャンプ", "4歳以上障害オープン（混合）", "/img/icon_grade_s_jg1.png", "4,250", "芝", 15, "pw01race11"),
+			),
+			want: []*model.RaceCard{
+				{
+					SpecialName: "中山グランドジャンプ",
+					Num:         11,
+					Grade:       model.GradeJG1,
+					AgeGroup:    model.AgeGroup4Plus,
+					Surface:     model.SurfaceJump,
+					Distance:    4250,
+					Runners:     15,
+					CNAME:       "pw01race11",
+					Fixture:     fixture,
+				},
+			},
+		},
+		{
 			name: "empty table",
 			html: racePageHTML(),
 			want: []*model.RaceCard{},

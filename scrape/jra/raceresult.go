@@ -147,7 +147,10 @@ func (ts *lapTimes) UnmarshalXPath(lapTimesStr []byte) error {
 		s0 := strings.TrimSpace(s)
 		lapTime, err := strconv.ParseFloat(s0, 64)
 		if err != nil {
-			return fmt.Errorf("invalid lap time found. lapTime=%s", string(lapTimesStr))
+			// Jump races use a mileage-based format (e.g. "1マイル 1分49秒3 4F 55.5 - 3F 41.8")
+			// that cannot be parsed as split lap times. Treat as no lap data.
+			*ts = lapTimes{}
+			return nil
 		}
 		*ts = append(*ts, lapTime)
 	}
