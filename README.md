@@ -27,12 +27,6 @@ turf fixtures --date 2025-06-01 --course tokyo
 turf races --date 2025-06-01 --course tokyo
 ```
 
-### List races
-
-```sh
-turf races --date 2025-06-01 --course tokyo
-```
-
 ### Get race result
 
 ```sh
@@ -57,3 +51,18 @@ turf result --date 2025-06-01 --course tokyo --race 11 \
 ## Courses
 
 `tokyo`, `kyoto`, `hanshin`, `nakayama`, `chukyo`, `kokura`, `sapporo`, `hakodate`, `fukushima`, `niigata`
+
+## Docker
+
+Pull from GHCR:
+
+```bash
+docker pull ghcr.io/octarect/turf:latest
+```
+
+Run:
+
+```bash
+docker run --rm ghcr.io/octarect/turf:latest result --date 2025-06-01 --course tokyo --race 11
+```
+
