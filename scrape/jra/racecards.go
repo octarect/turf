@@ -98,6 +98,8 @@ func (rc *raceCard) toModel(fixture *model.Fixture) (*model.RaceCard, error) {
 		specialName = name
 	}
 
+	// Some jump races display "芝" in the course cell instead of "芝→ダート",
+	// so we override the surface based on the race name/subname.
 	surface := model.Surface(rc.Surface)
 	if strings.Contains(name+subName, "障害") {
 		surface = model.SurfaceJump
