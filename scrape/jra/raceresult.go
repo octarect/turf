@@ -44,8 +44,8 @@ type raceResultPage struct {
 			ID    string `xpath:"replace(//@href, '.*pw[0-9]{2}[a-z]{3}[0-9]{2}([0-9]{10})/[0-9A-Z]{2}.*', '$1')"`
 		} `xpath:"//td[@class='horse']//a"`
 		HorseSexAge struct {
-			Sex horseSex `xpath:"replace(//text(), '(.*)[0-9]+', '$1')"`
-			Age int      `xpath:"replace(//text(), '.*([0-9]+)', '$1')"`
+			Sex horseSex `xpath:"replace(//text(), '([^0-9]+).*', '$1')"`
+			Age int      `xpath:"replace(//text(), '[^0-9]+([0-9]+)', '$1')"`
 		} `xpath:"//td[@class='age']"`
 		Weight     float64 `xpath:"//td[@class='weight']/text()"`
 		JockeyName struct {
