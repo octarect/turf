@@ -425,7 +425,11 @@ var regexpHorseWeight = regexp.MustCompile(`(?P<weight>[0-9]+)(?:\((?:(?P<diff>[
 // The format is: weight(diff) where diff is a signed integer or a special annotation.
 // "計不" (計量不能) means the weight could not be measured and is stored in Other.
 func (hw *horseWeight) UnmarshalXPath(weightStr []byte) error {
-	s := string(weightStr)
+	s := strings.TrimSpace(string(weightStr))
+	if s == "" {
+		// Weight == 0 means the horse weight is unavailable (not measured or not recorded).
+		return nil
+	}
 	m := regexpHorseWeight.FindStringSubmatch(s)
 	if len(m) < 2 {
 		return fmt.Errorf("invalid horse weight found. weightStr=%s", s)
