@@ -120,11 +120,11 @@ func (g Grade) String() string {
 	case Grade0W:
 		return "maiden"
 	case Grade1W:
-		return "1_win"
+		return "1win"
 	case Grade2W:
-		return "2_win"
+		return "2win"
 	case Grade3W:
-		return "3_win"
+		return "3win"
 	case GradeOP:
 		return "open"
 	case GradeG3:
