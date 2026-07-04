@@ -102,10 +102,26 @@ type FemaleOnly bool
 type WeightRule int
 
 const (
-	WeightRuleAge      WeightRule = iota // 馬齢
-	WeightRuleSpecial                    // 定量・別定
-	WeightRuleHandicap                   // ハンデキャップ
+	WeightRuleAge WeightRule = iota
+	WeightRuleSpecial
+	WeightRuleHandicap
 )
+
+func (w WeightRule) String() string {
+	switch w {
+	case WeightRuleAge:
+		return "weight_for_age"
+	case WeightRuleSpecial:
+		return "special_weight"
+	case WeightRuleHandicap:
+		return "handicap"
+	}
+	return "invalid"
+}
+
+func (w WeightRule) MarshalJSON() ([]byte, error) {
+	return json.Marshal(w.String())
+}
 
 type FinishStatus int
 
