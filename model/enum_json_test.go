@@ -143,7 +143,7 @@ func TestRaceCardDisplayName(t *testing.T) {
 		{
 			name:   "no special name falls back to generated",
 			rc:     RaceCard{AgeGroup: AgeGroup3Plus, Grade: Grade1W},
-			wantEN: "3yo_plus 1_win",
+			wantEN: "3yo_plus 1win",
 			wantJP: "3歳以上1勝クラス",
 		},
 		{
