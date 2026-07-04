@@ -428,7 +428,7 @@ func TestGetRaceResult(t *testing.T) {
 				SexAge:         "牡3",
 				Weight:         "57",
 				JockeyName:     "テスト騎手",
-				JockeyCNAME:    "pw01jockey01",
+				JockeyCNAME:    "pw04kmk001149/10",
 				FinishTime:     "2:24.1",
 				Margin:         "",
 				Corners: []cornerPositionHTML{
@@ -438,7 +438,7 @@ func TestGetRaceResult(t *testing.T) {
 				Last3F:       "34.5",
 				HorseWeight:  "480(+2)",
 				TrainerName:  "テスト調教師",
-				TrainerCNAME: "pw01trainer01",
+				TrainerCNAME: "pw05cmk001108/1B",
 				WinFavorite:  1,
 			},
 			{
@@ -451,7 +451,7 @@ func TestGetRaceResult(t *testing.T) {
 				Weight:          "55",
 				JockeyName:      "減量テスト騎手",
 				JockeyAllowance: 3,
-				JockeyCNAME:     "pw01jockey02",
+				JockeyCNAME:     "pw04kmk001150/10",
 				FinishTime:      "2:24.5",
 				Margin:          "クビ",
 				Corners: []cornerPositionHTML{
@@ -461,7 +461,7 @@ func TestGetRaceResult(t *testing.T) {
 				Last3F:       "34.8",
 				HorseWeight:  "460(0)",
 				TrainerName:  "テスト調教師2",
-				TrainerCNAME: "pw01trainer02",
+				TrainerCNAME: "pw05cmk001109/1B",
 				WinFavorite:  3,
 			},
 			{
@@ -483,7 +483,7 @@ func TestGetRaceResult(t *testing.T) {
 				Last3F:       "35.1",
 				HorseWeight:  "500(-4)",
 				TrainerName:  "テスト調教師3",
-				TrainerCNAME: "pw01trainer03",
+				TrainerCNAME: "pw05cmk001110/1B",
 				WinFavorite:  5,
 			},
 		},
@@ -531,12 +531,14 @@ func TestGetRaceResult(t *testing.T) {
 					CNAME:      "pw01dby012023000001/A1",
 				},
 				Jockey: model.EntryJockey{
+					ID:    "01149",
 					Name:  "テスト騎手",
-					CNAME: "pw01jockey01",
+					CNAME: "pw04kmk001149/10",
 				},
 				Trainer: model.EntryTrainer{
+					ID:    "01108",
 					Name:  "テスト調教師",
-					CNAME: "pw01trainer01",
+					CNAME: "pw05cmk001108/1B",
 				},
 			},
 			{
@@ -562,13 +564,15 @@ func TestGetRaceResult(t *testing.T) {
 					CNAME:      "pw01dby012023000002/B2",
 				},
 				Jockey: model.EntryJockey{
+					ID:        "01150",
 					Name:      "減量テスト騎手",
 					Allowance: 3,
-					CNAME:     "pw01jockey02",
+					CNAME:     "pw04kmk001150/10",
 				},
 				Trainer: model.EntryTrainer{
+					ID:    "01109",
 					Name:  "テスト調教師2",
-					CNAME: "pw01trainer02",
+					CNAME: "pw05cmk001109/1B",
 				},
 			},
 			{
@@ -598,8 +602,9 @@ func TestGetRaceResult(t *testing.T) {
 					CNAME: "",
 				},
 				Trainer: model.EntryTrainer{
+					ID:    "01110",
 					Name:  "テスト調教師3",
-					CNAME: "pw01trainer03",
+					CNAME: "pw05cmk001110/1B",
 				},
 			},
 		},
@@ -665,7 +670,7 @@ func TestGetRaceResult_TwoLaps(t *testing.T) {
 				SexAge:         "牡4",
 				Weight:         "57",
 				JockeyName:     "テスト騎手",
-				JockeyCNAME:    "pw01jockey01",
+				JockeyCNAME:    "pw04kmk001149/10",
 				FinishTime:     "3:04.5",
 				Margin:         "",
 				Corners: []cornerPositionHTML{
@@ -679,7 +684,7 @@ func TestGetRaceResult_TwoLaps(t *testing.T) {
 				Last3F:       "36.0",
 				HorseWeight:  "490(0)",
 				TrainerName:  "テスト調教師",
-				TrainerCNAME: "pw01trainer01",
+				TrainerCNAME: "pw05cmk001108/1B",
 				WinFavorite:  1,
 			},
 		},
@@ -735,12 +740,14 @@ func TestGetRaceResult_TwoLaps(t *testing.T) {
 					CNAME:      "pw01dby012022000001/A1",
 				},
 				Jockey: model.EntryJockey{
+					ID:    "01149",
 					Name:  "テスト騎手",
-					CNAME: "pw01jockey01",
+					CNAME: "pw04kmk001149/10",
 				},
 				Trainer: model.EntryTrainer{
+					ID:    "01108",
 					Name:  "テスト調教師",
-					CNAME: "pw01trainer01",
+					CNAME: "pw05cmk001108/1B",
 				},
 			},
 		},

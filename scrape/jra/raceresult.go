@@ -52,6 +52,7 @@ type raceResultPage struct {
 			Text      jockeyNameText      `xpath:"//self::*"`
 			Allowance jockeyNameAllowance `xpath:"/span[@class='mark jockey']/@title"`
 			CNAME     string              `xpath:"replace(//a/@onclick, '.*(pw[0-9A-Za-z/]+).*', '$1')"`
+			ID        string              `xpath:"replace(//a/@onclick, '.*pw[0-9]{2}[a-z]{3}[0-9]+([0-9]{5})/[0-9A-Za-z]+.*', '$1')"`
 		} `xpath:"//td[@class='jockey']"`
 		FinishTime      finishTime `xpath:"//td[@class='time']"`
 		Margin          margin     `xpath:"normalize-space(//td[@class='margin']/text())"`
@@ -64,6 +65,7 @@ type raceResultPage struct {
 		TrainerName struct {
 			Text  string `xpath:"//text()"`
 			CNAME string `xpath:"replace(//@onclick, '.*(pw[0-9A-Za-z/]+).*', '$1')"`
+			ID    string `xpath:"replace(//@onclick, '.*pw[0-9]{2}[a-z]{3}[0-9]+([0-9]{5})/[0-9A-Za-z]+.*', '$1')"`
 		} `xpath:"//td[@class='trainer']"`
 		WinFavorite optionalInt `xpath:"//td[@class='pop']/text()"`
 	} `xpath:"//div[@id='race_result']/div/table/tbody/tr"`
@@ -536,11 +538,13 @@ func (c *JRAClient) GetRaceResult(ctx context.Context, raceCard *model.RaceCard)
 				CNAME:      e.HorseName.CNAME,
 			},
 			Jockey: model.EntryJockey{
+				ID:        model.JockeyID(e.JockeyName.ID),
 				Name:      string(e.JockeyName.Text),
 				Allowance: int(e.JockeyName.Allowance),
 				CNAME:     e.JockeyName.CNAME,
 			},
 			Trainer: model.EntryTrainer{
+				ID:    model.TrainerID(e.TrainerName.ID),
 				Name:  e.TrainerName.Text,
 				CNAME: e.TrainerName.CNAME,
 			},
