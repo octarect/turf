@@ -3,6 +3,8 @@ package model
 import "encoding/json"
 
 type HorseID string
+type JockeyID string
+type TrainerID string
 
 type HorseSex int
 

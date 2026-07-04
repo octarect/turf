@@ -210,16 +210,18 @@ type EntryHorse struct {
 }
 
 type EntryJockey struct {
-	Name      string `json:"name"`
-	NameEN    string `json:"nameEN,omitempty"`
-	Allowance int    `json:"allowance"`
-	CNAME     string `json:"cname"`
+	ID        JockeyID `json:"id,omitempty"`
+	Name      string   `json:"name"`
+	NameEN    string   `json:"nameEN,omitempty"`
+	Allowance int      `json:"allowance"`
+	CNAME     string   `json:"cname"`
 }
 
 type EntryTrainer struct {
-	Name   string `json:"name"`
-	NameEN string `json:"nameEN,omitempty"`
-	CNAME  string `json:"cname"`
+	ID     TrainerID `json:"id,omitempty"`
+	Name   string    `json:"name"`
+	NameEN string    `json:"nameEN,omitempty"`
+	CNAME  string    `json:"cname"`
 }
 
 type CornerPosition struct {
