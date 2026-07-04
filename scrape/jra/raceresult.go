@@ -431,9 +431,9 @@ func (m *margin) UnmarshalXPath(marginStr []byte) error {
 
 var regexpHorseWeight = regexp.MustCompile(`(?P<weight>[0-9]+)(?:\((?:(?P<diff>[-+]?[0-9]+)|(?P<other>[^)]+))\))?`)
 
-// UnmarshalXPath parses a horse weight string like "480(+2)" or "480(計不)".
+// UnmarshalXPath parses a horse weight string like "480(+2)", "480(計不)", or "計不".
 // The format is: weight(diff) where diff is a signed integer or a special annotation.
-// "計不" (計量不能) means the weight could not be measured and is stored in Other.
+// "計不" (計量不能) means the weight could not be measured.
 func (hw *horseWeight) UnmarshalXPath(weightStr []byte) error {
 	s := strings.TrimSpace(string(weightStr))
 	if s == "" {
@@ -442,6 +442,11 @@ func (hw *horseWeight) UnmarshalXPath(weightStr []byte) error {
 	}
 	m := regexpHorseWeight.FindStringSubmatch(s)
 	if len(m) < 2 {
+		if strings.HasPrefix(s, "計不") {
+			// "計不" (計量不能) means the weight could not be measured.
+			// Zero value (Weight=0, Diff=0) indicates unavailable.
+			return nil
+		}
 		return fmt.Errorf("invalid horse weight found. weightStr=%s", s)
 	}
 
