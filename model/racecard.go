@@ -1,6 +1,9 @@
 package model
 
-import "encoding/json"
+import (
+	"encoding/json"
+	"fmt"
+)
 
 // RaceCard is the entry list for a single race within a fixture.
 // A fixture typically contains 12 race cards.
@@ -18,6 +21,13 @@ type RaceCard struct {
 	// to fetch the race result.
 	CNAME   string   `json:"cname"`
 	Fixture *Fixture `json:"fixture"`
+}
+
+func (rc *RaceCard) ID() string {
+	if rc.Fixture == nil {
+		return ""
+	}
+	return fmt.Sprintf("%04d%02d%02d%02d%02d", rc.Fixture.Year, int(rc.Fixture.Course), rc.Fixture.Season, rc.Fixture.Day, rc.Num)
 }
 
 func (rc *RaceCard) DisplayName() string {
@@ -45,10 +55,12 @@ func (rc *RaceCard) DisplayNameJP() string {
 func (rc *RaceCard) MarshalJSON() ([]byte, error) {
 	type Alias RaceCard
 	return json.Marshal(&struct {
+		ID     string `json:"id"`
 		Name   string `json:"name"`
 		NameEN string `json:"nameEN"`
 		*Alias
 	}{
+		ID:     rc.ID(),
 		Name:   rc.DisplayNameJP(),
 		NameEN: rc.DisplayName(),
 		Alias:  (*Alias)(rc),
