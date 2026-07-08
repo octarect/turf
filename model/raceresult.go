@@ -104,6 +104,7 @@ type WeightRule int
 const (
 	WeightRuleAge WeightRule = iota
 	WeightRuleSpecial
+	WeightRuleSetWeight
 	WeightRuleHandicap
 )
 
@@ -113,6 +114,8 @@ func (w WeightRule) String() string {
 		return "weight_for_age"
 	case WeightRuleSpecial:
 		return "special_weight"
+	case WeightRuleSetWeight:
+		return "set_weight"
 	case WeightRuleHandicap:
 		return "handicap"
 	}
