@@ -134,7 +134,7 @@ func TestWeightRuleUnmarshalXPath(t *testing.T) {
 	}{
 		{"age", "馬齢", model.WeightRuleAge, false},
 		{"special (別定)", "別定", model.WeightRuleSpecial, false},
-		{"special (定量)", "定量", model.WeightRuleSpecial, false},
+		{"set weight (定量)", "定量", model.WeightRuleSetWeight, false},
 		{"handicap", "ハンデ", model.WeightRuleHandicap, false},
 		{"with whitespace", "  馬齢  ", model.WeightRuleAge, false},
 		{"invalid", "不明", 0, true},

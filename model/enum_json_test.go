@@ -38,6 +38,7 @@ func TestEnumString(t *testing.T) {
 		{name: "going", got: GoingTurfGoodToFirm.String(), want: "good_to_firm"},
 		{name: "horse sex", got: HorseSexGelding.String(), want: "gelding"},
 		{name: "margin kind", got: MarginKindDeadHeat.String(), want: "dead_heat"},
+		{name: "weight rule set weight", got: WeightRuleSetWeight.String(), want: "set_weight"},
 	}
 
 	for _, tt := range tests {

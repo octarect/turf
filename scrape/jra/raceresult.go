@@ -135,8 +135,10 @@ func (wg *weightRule) UnmarshalXPath(text []byte) error {
 	switch s {
 	case "馬齢":
 		*wg = weightRule(model.WeightRuleAge)
-	case "別定", "定量":
+	case "別定":
 		*wg = weightRule(model.WeightRuleSpecial)
+	case "定量":
+		*wg = weightRule(model.WeightRuleSetWeight)
 	case "ハンデ":
 		*wg = weightRule(model.WeightRuleHandicap)
 	default:
