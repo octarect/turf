@@ -92,6 +92,9 @@ func TestStructuredJSONUsesLabels(t *testing.T) {
 			Surface:     SurfaceTurf,
 			Fixture: &Fixture{
 				Course: CourseTokyo,
+				Year:   2026,
+				Season: 3,
+				Day:    1,
 				Date:   Date{Time: time.Date(2026, 5, 31, 0, 0, 0, 0, time.UTC)},
 			},
 		},
@@ -110,6 +113,7 @@ func TestStructuredJSONUsesLabels(t *testing.T) {
 
 	got := string(b)
 	for _, want := range []string{
+		`"id":"202605030111"`,
 		`"course":"tokyo"`,
 		`"grade":"g1"`,
 		`"ageGroup":"3yo"`,
@@ -180,6 +184,54 @@ func TestRaceCardDisplayName(t *testing.T) {
 			}
 			if got := tt.rc.DisplayNameJP(); got != tt.wantJP {
 				t.Fatalf("DisplayNameJP() = %q, want %q", got, tt.wantJP)
+			}
+		})
+	}
+}
+
+func TestRaceCardID(t *testing.T) {
+	tests := []struct {
+		name string
+		rc   RaceCard
+		want string
+	}{
+		{
+			name: "netkeiba style year course season day num",
+			rc: RaceCard{
+				Num: 4,
+				Fixture: &Fixture{
+					Year:   2020,
+					Course: CourseChukyo,
+					Season: 1,
+					Day:    7,
+				},
+			},
+			want: "202007010704",
+		},
+		{
+			name: "nil fixture returns empty",
+			rc:   RaceCard{Num: 1},
+			want: "",
+		},
+		{
+			name: "single digit padding",
+			rc: RaceCard{
+				Num: 1,
+				Fixture: &Fixture{
+					Year:   2025,
+					Course: CourseTokyo,
+					Season: 1,
+					Day:    1,
+				},
+			},
+			want: "202505010101",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := tt.rc.ID(); got != tt.want {
+				t.Fatalf("ID() = %q, want %q", got, tt.want)
 			}
 		})
 	}
