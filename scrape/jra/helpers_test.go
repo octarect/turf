@@ -78,6 +78,67 @@ func raceRowHTML(raceNo int, name, subName, gradeIcon, distance, courseType stri
 		`</tr>`
 }
 
+func latestFixturesPageHTML(panels ...string) string {
+	return `<div id="main">` + strings.Join(panels, "") + `</div>`
+}
+
+func latestFixturesPanelHTML(monthDay string, items ...string) string {
+	return `<div class="panel"><h3 class="sub_header">` + monthDay + `</h3>` +
+		strings.Join(items, "") + `</div>`
+}
+
+func latestFixturesItemHTML(cname, fixture string) string {
+	return `<div class="waku"><a onclick="return doAction('x', '` + cname + `');">` + fixture + `</a></div>`
+}
+
+type racePlanEntryHTML struct {
+	Bracket      int
+	HorseNo      int
+	HorseName    string
+	HorseCNAME   string
+	HorseID      string
+	SexAge       string
+	HorseWeight  string
+	Weight       string
+	JockeyName   string
+	JockeyCNAME  string
+	JockeyID     string
+	TrainerName  string
+	TrainerCNAME string
+	TrainerID    string
+}
+
+func racePlanPageHTML(postTime string, entries ...racePlanEntryHTML) string {
+	doc := []string{
+		`<div class="cell rule"></div>`,
+		`<div class="cell weight">馬齢</div>`,
+		`<div class="cell time"><strong>` + postTime + `</strong></div>`,
+		`<div id="syutsuba"><table><tbody>`,
+	}
+	for _, e := range entries {
+		doc = append(doc, racePlanEntryRowHTML(e))
+	}
+	doc = append(doc, `</tbody></table></div>`)
+	return strings.Join(doc, "")
+}
+
+func racePlanEntryRowHTML(e racePlanEntryHTML) string {
+	return `<tr>` +
+		`<td class="waku"><img src="/img/waku` + strconv.Itoa(e.Bracket) + `.png"/></td>` +
+		`<td class="num">` + strconv.Itoa(e.HorseNo) + `</td>` +
+		`<td class="horse">` +
+		`<div class="name"><a href="/JRADB/accessS.html?CNAME=` + e.HorseCNAME + `">` + e.HorseName + `</a></div>` +
+		`<div class="weight">` + e.HorseWeight + `</div>` +
+		`<p class="trainer"><a onclick="return doAction('x', '` + e.TrainerCNAME + `');">` + e.TrainerName + `</a></p>` +
+		`</td>` +
+		`<td class="jockey">` +
+		`<p class="age">` + e.SexAge + `</p>` +
+		`<p class="weight">` + e.Weight + `</p>` +
+		`<p class="jockey"><a onclick="return doAction('x', '` + e.JockeyCNAME + `');">` + e.JockeyName + `</a></p>` +
+		`</td>` +
+		`</tr>`
+}
+
 type resultOpts struct {
 	Weather          string
 	GoingClass       string

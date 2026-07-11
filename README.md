@@ -33,6 +33,25 @@ turf races --date 2025-06-01 --course tokyo
 turf result --date 2025-06-01 --course tokyo --race 11
 ```
 
+### List this week's fixtures
+
+```sh
+turf latest-fixtures
+turf latest-fixtures --course tokyo
+```
+
+### List this week's races
+
+```sh
+turf latest-races --date 2025-07-12 --course tokyo
+```
+
+### Get race plan (entry list)
+
+```sh
+turf plan --date 2025-07-12 --course tokyo --race 11
+```
+
 ## Output Formats
 
 | Format | Flag | Description |

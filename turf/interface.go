@@ -34,3 +34,16 @@ type RaceResultGetter interface {
 type RaceResultTranslator interface {
 	GetRaceResultTranslation(context.Context, *model.RaceCard) (*model.RaceResultTranslation, error)
 }
+
+// LatestFixtureLister is the low-level interface for fetching this week's fixtures from JRA.
+// Implemented by scrape/jra.JRAClient.
+type LatestFixtureLister interface {
+	ListLatestFixtures(context.Context) ([]*model.Fixture, error)
+}
+
+// RacePlanGetter is the low-level interface for fetching a race plan (今週の出馬表) from JRA.
+// It accepts a RaceCard and returns the full entry list.
+// Implemented by scrape/jra.JRAClient.
+type RacePlanGetter interface {
+	GetRacePlan(context.Context, *model.RaceCard) (*model.RacePlan, error)
+}

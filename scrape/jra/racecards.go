@@ -22,8 +22,8 @@ type raceCard struct {
 	Name         raceName `xpath:"//td[@class='race_name']/div/div[1]"`
 	SubName      raceName `xpath:"//td[@class='race_name']/div/div[2]"`
 	GradeIconSrc string   `xpath:"//td[@class='race_name']//span[@class='grade_icon']/img/@src"`
-	Distance     distance `xpath:"//td[@class='dist']/text()"`
-	Surface      surface  `xpath:"//td[@class='course']/text()"`
+	Distance     distance `xpath:"//td[@class='dist']/descendant-or-self::*[@class='dist']/text()"`
+	Surface      surface  `xpath:"//td[@class='course']/text() | //td[@class='dist']/span[@class='course']/text()"`
 	Runners      int      `xpath:"normalize-space(//td[@class='num']/text())"`
 	CNAME        string   `xpath:"replace(//th[@class='race_num']/a/@href, '.*(pw[0-9A-Za-z/]+).*', '$1')"`
 }
