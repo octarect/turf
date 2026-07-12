@@ -35,7 +35,7 @@ type raceResultPage struct {
 		HorseName   string `xpath:"replace(//td[@class='raceHorse'][1]/a/@bamei, '\\([A-Z]+\\)', '')"`
 		JockeyName  string `xpath:"//td[@class='raceHorse'][4]/text()[1]"`
 		TrainerName string `xpath:"//td[@class='raceHorse'][4]/text()[2]"`
-	} `xpath:"//body/table[@class='running'][2]//tr[position() >= 2]"`
+	} `xpath:"//body/table[@class='running'][last()]//tr[position() >= 2]"`
 }
 
 func (c *JRAENClient) GetRaceResultTranslation(ctx context.Context, raceCard *model.RaceCard) (*model.RaceResultTranslation, error) {
