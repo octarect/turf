@@ -38,6 +38,14 @@ func TestEnumString(t *testing.T) {
 		{name: "going", got: GoingTurfGoodToFirm.String(), want: "good_to_firm"},
 		{name: "horse sex", got: HorseSexGelding.String(), want: "gelding"},
 		{name: "margin kind", got: MarginKindDeadHeat.String(), want: "dead_heat"},
+		{name: "payoff type win", got: PayoffTypeWin.String(), want: "win"},
+		{name: "payoff type show", got: PayoffTypeShow.String(), want: "show"},
+		{name: "payoff type bracket quinella", got: PayoffTypeBracketQuinella.String(), want: "bracket_quinella"},
+		{name: "payoff type quinella", got: PayoffTypeQuinella.String(), want: "quinella"},
+		{name: "payoff type quinella place", got: PayoffTypeQuinellaPlace.String(), want: "quinella_place"},
+		{name: "payoff type exacta", got: PayoffTypeExacta.String(), want: "exacta"},
+		{name: "payoff type trio", got: PayoffTypeTrio.String(), want: "trio"},
+		{name: "payoff type trifecta", got: PayoffTypeTrifecta.String(), want: "trifecta"},
 		{name: "weight rule set weight", got: WeightRuleSetWeight.String(), want: "set_weight"},
 	}
 
@@ -66,6 +74,10 @@ func TestEnumMarshalJSON(t *testing.T) {
 		{name: "going", v: GoingDirtMuddy, want: `"muddy"`},
 		{name: "horse sex", v: HorseSexFemale, want: `"female"`},
 		{name: "margin kind", v: MarginKindHead, want: `"head"`},
+		{name: "payoff type win", v: PayoffTypeWin, want: `"win"`},
+		{name: "payoff type bracket quinella", v: PayoffTypeBracketQuinella, want: `"bracket_quinella"`},
+		{name: "payoff type exacta", v: PayoffTypeExacta, want: `"exacta"`},
+		{name: "payoff type trio", v: PayoffTypeTrio, want: `"trio"`},
 		{name: "invalid", v: Surface(99), want: `"invalid"`},
 	}
 
@@ -104,6 +116,10 @@ func TestStructuredJSONUsesLabels(t *testing.T) {
 			Margin: Margin{Kind: MarginKindDeadHeat},
 			Horse:  EntryHorse{Sex: HorseSexMale},
 		}},
+		Payoffs: []Payoff{
+			{Type: PayoffTypeWin, Nums: []int{3}, JPY: 480, Favorite: 1},
+			{Type: PayoffTypeTrifecta, Nums: []int{1, 5, 3}, JPY: 12500, Favorite: 3},
+		},
 	}
 
 	b, err := json.Marshal(v)
@@ -123,6 +139,9 @@ func TestStructuredJSONUsesLabels(t *testing.T) {
 		`"weather":"fine"`,
 		`"kind":"dead_heat"`,
 		`"sex":"male"`,
+		`"type":"win"`,
+		`"type":"trifecta"`,
+		`"jpy":12500`,
 		`"raceCard":`,
 		`"last3F":`,
 	} {

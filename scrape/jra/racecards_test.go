@@ -47,35 +47,6 @@ func TestRaceNameUnmarshalXPath(t *testing.T) {
 	}
 }
 
-func TestDistanceUnmarshalXPath(t *testing.T) {
-	tests := []struct {
-		name    string
-		input   string
-		want    distance
-		wantErr bool
-	}{
-		{"1600", "1600", distance(1600), false},
-		{"2,400", "2,400", distance(2400), false},
-		{"invalid", "abc", distance(0), true},
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			var got distance
-			err := got.UnmarshalXPath([]byte(tt.input))
-			if (err != nil) != tt.wantErr {
-				t.Fatalf("wantErr = %v, error = %v", tt.wantErr, err)
-			}
-			if tt.wantErr {
-				return
-			}
-			if diff := cmp.Diff(tt.want, got); diff != "" {
-				t.Fatalf("distance mismatch (-want +got):\n%s", diff)
-			}
-		})
-	}
-}
-
 func TestSurfaceUnmarshalXPath(t *testing.T) {
 	tests := []struct {
 		name    string

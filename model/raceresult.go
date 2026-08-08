@@ -17,6 +17,7 @@ type RaceResult struct {
 	WeightRule       WeightRule        `json:"weightRule"`
 	PostTime         time.Time         `json:"postTime"`
 	Entries          []Entry           `json:"entries"`
+	Payoffs          []Payoff          `json:"payoffs"`
 	LapTimes         []float64         `json:"lapTimes"`
 	CornerFormations []CornerFormation `json:"cornerFormations"`
 }
@@ -180,6 +181,53 @@ type Entry struct {
 type Margin struct {
 	Kind   MarginKind `json:"kind"`
 	Length float64    `json:"length"`
+}
+
+type Payoff struct {
+	Type     PayoffType `json:"type"`
+	Nums     []int      `json:"nums"`
+	JPY      int        `json:"jpy"`
+	Favorite int        `json:"favorite"`
+}
+
+type PayoffType int
+
+const (
+	PayoffTypeWin PayoffType = iota
+	PayoffTypeShow
+	PayoffTypeBracketQuinella
+	PayoffTypeQuinella
+	PayoffTypeQuinellaPlace
+	PayoffTypeExacta
+	PayoffTypeTrio
+	PayoffTypeTrifecta
+)
+
+func (p PayoffType) String() string {
+	switch p {
+	case PayoffTypeWin:
+		return "win"
+	case PayoffTypeShow:
+		return "show"
+	case PayoffTypeBracketQuinella:
+		return "bracket_quinella"
+	case PayoffTypeQuinella:
+		return "quinella"
+	case PayoffTypeQuinellaPlace:
+		return "quinella_place"
+	case PayoffTypeExacta:
+		return "exacta"
+	case PayoffTypeTrio:
+		return "trio"
+	case PayoffTypeTrifecta:
+		return "trifecta"
+	}
+
+	return "invalid"
+}
+
+func (p PayoffType) MarshalJSON() ([]byte, error) {
+	return json.Marshal(p.String())
 }
 
 type MarginKind int
