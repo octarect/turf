@@ -487,6 +487,23 @@ func TestGetRaceResult(t *testing.T) {
 				WinFavorite:  5,
 			},
 		},
+		Payoffs: []payoffHTML{
+			{Class: "win", Label: "単勝", Lines: []payoffLineHTML{
+				{Nums: "10", JPY: "480", Favorite: "1"},
+				{Nums: "", JPY: "200", Favorite: "2"},
+			}},
+			{Class: "place", Label: "複勝", Lines: []payoffLineHTML{
+				{Nums: "10", JPY: "150", Favorite: "1"},
+				{Nums: "5", JPY: "200", Favorite: "3"},
+				{Nums: "14", JPY: "0", Favorite: "4"},
+			}},
+			{Class: "wakuren", Label: "枠連", Lines: []payoffLineHTML{{Nums: "5-3", JPY: "800", Favorite: "2"}}},
+			{Class: "umaren", Label: "馬連", Lines: []payoffLineHTML{{Nums: "5-10", JPY: "1,200", Favorite: "2"}}},
+			{Class: "wide", Label: "ワイド", Lines: []payoffLineHTML{{Nums: "5-10", JPY: "300", Favorite: "1"}}},
+			{Class: "umatan", Label: "馬単", Lines: []payoffLineHTML{{Nums: "10-5", JPY: "2,500", Favorite: "3"}}},
+			{Class: "trio", Label: "3連複", Lines: []payoffLineHTML{{Nums: "5-10-14", JPY: "8,000", Favorite: "5"}}},
+			{Class: "tierce", Label: "3連単", Lines: []payoffLineHTML{{Nums: "10-5-14", JPY: "25,000", Favorite: "12"}}},
+		},
 	})
 
 	got, err := client.GetRaceResult(context.Background(), raceCard)
@@ -608,6 +625,17 @@ func TestGetRaceResult(t *testing.T) {
 				},
 			},
 		},
+		Payoffs: []model.Payoff{
+			{Type: model.PayoffTypeWin, Nums: []int{10}, JPY: 480, Favorite: 1},
+			{Type: model.PayoffTypeShow, Nums: []int{10}, JPY: 150, Favorite: 1},
+			{Type: model.PayoffTypeShow, Nums: []int{5}, JPY: 200, Favorite: 3},
+			{Type: model.PayoffTypeBracketQuinella, Nums: []int{5, 3}, JPY: 800, Favorite: 2},
+			{Type: model.PayoffTypeQuinella, Nums: []int{5, 10}, JPY: 1200, Favorite: 2},
+			{Type: model.PayoffTypeQuinellaPlace, Nums: []int{5, 10}, JPY: 300, Favorite: 1},
+			{Type: model.PayoffTypeExacta, Nums: []int{10, 5}, JPY: 2500, Favorite: 3},
+			{Type: model.PayoffTypeTrio, Nums: []int{5, 10, 14}, JPY: 8000, Favorite: 5},
+			{Type: model.PayoffTypeTrifecta, Nums: []int{10, 5, 14}, JPY: 25000, Favorite: 12},
+		},
 	}
 
 	if diff := cmp.Diff(want, got); diff != "" {
@@ -704,6 +732,7 @@ func TestGetRaceResult_TwoLaps(t *testing.T) {
 		WeightRule: model.WeightRuleAge,
 		PostTime:   time.Date(2022, 5, 1, 15, 45, 0, 0, timeJST),
 		LapTimes:   []float64{13.0, 12.5, 12.0},
+		Payoffs:    []model.Payoff{},
 		CornerFormations: []model.CornerFormation{
 			{Corner: 1, Formation: "5-10-2"},
 			{Corner: 2, Formation: "5-10-2"},
@@ -755,5 +784,32 @@ func TestGetRaceResult_TwoLaps(t *testing.T) {
 
 	if diff := cmp.Diff(want, got); diff != "" {
 		t.Fatalf("GetRaceResult mismatch (-want +got):\n%s", diff)
+	}
+}
+
+func TestWinNumsUnmarshalXPath(t *testing.T) {
+	tests := []struct {
+		name  string
+		input string
+		want  winNums
+	}{
+		{"single", "1", winNums{1}},
+		{"multiple", "1-2", winNums{1, 2}},
+		{"three", "1-2-3", winNums{1, 2, 3}},
+		{"with spaces", " 1 - 2 ", winNums{1, 2}},
+		{"empty", "", nil},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			var got winNums
+			err := got.UnmarshalXPath([]byte(tt.input))
+			if err != nil {
+				t.Fatalf("unexpected error: %v", err)
+			}
+			if diff := cmp.Diff(tt.want, got); diff != "" {
+				t.Fatalf("winNums mismatch (-want +got):\n%s", diff)
+			}
+		})
 	}
 }

@@ -149,6 +149,19 @@ type resultOpts struct {
 	LapTimes         string
 	CornerFormations []cornerFormationHTML
 	Entries          []entryHTML
+	Payoffs          []payoffHTML
+}
+
+type payoffHTML struct {
+	Class string
+	Label string
+	Lines []payoffLineHTML
+}
+
+type payoffLineHTML struct {
+	Nums     string
+	JPY      string
+	Favorite string
 }
 
 type cornerFormationHTML struct {
@@ -219,6 +232,36 @@ func raceResultPageHTML(opts resultOpts) string {
 
 	doc = append(doc, `</tbody></table></div></div>`)
 
+	if len(opts.Payoffs) > 0 {
+		doc = append(doc, `<div class="refund_unit mt15">`)
+		for _, section := range [][]string{{"win", "place"}, {"wakuren", "wide"}, {"umaren", "umatan", "trio", "tierce"}} {
+			doc = append(doc, `<div><ul>`)
+			for _, class := range section {
+				for _, p := range opts.Payoffs {
+					if p.Class != class {
+						continue
+					}
+					doc = append(doc, payoffHTMLBlock(p))
+				}
+			}
+			doc = append(doc, `</ul></div>`)
+		}
+		doc = append(doc, `</div>`)
+	}
+
+	return strings.Join(doc, "")
+}
+
+func payoffHTMLBlock(p payoffHTML) string {
+	doc := []string{`<li class="`, p.Class, `"><dl><dt>`, p.Label, `</dt><dd>`}
+	for _, line := range p.Lines {
+		doc = append(doc,
+			`<div class="line"><div class="num">`, line.Nums,
+			`</div><div class="yen">`, line.JPY, `<span class="unit">円</span></div><div class="pop">`,
+			line.Favorite, `<span>人気</span></div></div>`,
+		)
+	}
+	doc = append(doc, `</dd></dl></li>`)
 	return strings.Join(doc, "")
 }
 

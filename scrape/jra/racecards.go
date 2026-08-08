@@ -6,7 +6,6 @@ import (
 	"io"
 	"net/url"
 	"regexp"
-	"strconv"
 	"strings"
 
 	"github.com/octarect/turf/model"
@@ -22,7 +21,7 @@ type raceCard struct {
 	Name         raceName `xpath:"//td[@class='race_name']/div/div[1]"`
 	SubName      raceName `xpath:"//td[@class='race_name']/div/div[2]"`
 	GradeIconSrc string   `xpath:"//td[@class='race_name']//span[@class='grade_icon']/img/@src"`
-	Distance     distance `xpath:"//td[@class='dist']/descendant-or-self::*[@class='dist']/text()"`
+	Distance     commaSeparatedInt `xpath:"//td[@class='dist']/descendant-or-self::*[@class='dist']/text()"`
 	Surface      surface  `xpath:"//td[@class='course']/text() | //td[@class='dist']/span[@class='course']/text()"`
 	Runners      int      `xpath:"normalize-space(//td[@class='num']/text())"`
 	CNAME        string   `xpath:"replace(//th[@class='race_num']/a/@href, '.*(pw[0-9A-Za-z/]+).*', '$1')"`
@@ -145,18 +144,6 @@ func (rn *raceName) UnmarshalXPath(text []byte) error {
 
 	*rn = raceName(regexpRaceName.ReplaceAllString(s, ""))
 
-	return nil
-}
-
-type distance int
-
-func (d *distance) UnmarshalXPath(text []byte) error {
-	s := strings.ReplaceAll(string(text), ",", "")
-	n, err := strconv.Atoi(s)
-	if err != nil {
-		return fmt.Errorf("invalid distance found. text=%q", string(text))
-	}
-	*d = distance(n)
 	return nil
 }
 

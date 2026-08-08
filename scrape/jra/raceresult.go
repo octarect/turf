@@ -69,6 +69,17 @@ type raceResultPage struct {
 		} `xpath:"//td[@class='trainer']"`
 		WinFavorite optionalInt `xpath:"//td[@class='pop']/text()"`
 	} `xpath:"//div[@id='race_result']/div/table/tbody/tr"`
+
+	Payoffs struct {
+		Win             []payoff `xpath:"//li[@class='win']//div[@class='line']"`
+		Show            []payoff `xpath:"//li[@class='place']//div[@class='line']"`
+		BracketQuinella []payoff `xpath:"//li[@class='wakuren']//div[@class='line']"`
+		QuinellaPlace   []payoff `xpath:"//li[@class='wide']//div[@class='line']"`
+		Quinella        []payoff `xpath:"//li[@class='umaren']//div[@class='line']"`
+		Exacta          []payoff `xpath:"//li[@class='umatan']//div[@class='line']"`
+		Trio            []payoff `xpath:"//li[@class='trio']//div[@class='line']"`
+		Trifecta        []payoff `xpath:"//li[@class='tierce']//div[@class='line']"`
+	} `xpath:"//div[contains(@class, 'refund_unit')]"`
 }
 
 type weather model.Weather
@@ -472,6 +483,43 @@ func (hw *horseWeight) UnmarshalXPath(weightStr []byte) error {
 	return nil
 }
 
+type payoff struct {
+	Nums     winNums           `xpath:"//div[@class='num']"`
+	JPY      commaSeparatedInt `xpath:"replace(//div[@class='yen']/text(), ',', '')"`
+	Favorite int               `xpath:"//div[@class='pop']/text()"`
+}
+
+func (po *payoff) toModel(type0 model.PayoffType) model.Payoff {
+	return model.Payoff{
+		Type:     type0,
+		Nums:     []int(po.Nums),
+		JPY:      int(po.JPY),
+		Favorite: po.Favorite,
+	}
+}
+
+type winNums []int
+
+func (wns *winNums) UnmarshalXPath(text []byte) error {
+	if len(text) == 0 {
+		return nil
+	}
+	horseNums := strings.Split(string(text), "-")
+
+	nums := make([]int, 0, len(horseNums))
+	for _, hn := range horseNums {
+		n, err := strconv.Atoi(strings.TrimSpace(hn))
+		if err != nil {
+			return err
+		}
+		nums = append(nums, n)
+	}
+
+	*wns = winNums(nums)
+
+	return nil
+}
+
 func (c *JRAClient) GetRaceResult(ctx context.Context, raceCard *model.RaceCard) (*model.RaceResult, error) {
 	reqURL := fmt.Sprintf("%s?CNAME=%s", jraAccessSPath, url.QueryEscape(raceCard.CNAME))
 
@@ -554,6 +602,48 @@ func (c *JRAClient) GetRaceResult(ctx context.Context, raceCard *model.RaceCard)
 		entries = append(entries, e0)
 	}
 
+	var payoffs []model.Payoff
+	// Win
+	for _, p := range page.Payoffs.Win {
+		payoffs = append(payoffs, p.toModel(model.PayoffTypeWin))
+	}
+	// Show
+	for _, p := range page.Payoffs.Show {
+		payoffs = append(payoffs, p.toModel(model.PayoffTypeShow))
+	}
+	// Bracket Quinella
+	for _, p := range page.Payoffs.BracketQuinella {
+		payoffs = append(payoffs, p.toModel(model.PayoffTypeBracketQuinella))
+	}
+	// Quinella
+	for _, p := range page.Payoffs.Quinella {
+		payoffs = append(payoffs, p.toModel(model.PayoffTypeQuinella))
+	}
+	// QuinellaPlace
+	for _, p := range page.Payoffs.QuinellaPlace {
+		payoffs = append(payoffs, p.toModel(model.PayoffTypeQuinellaPlace))
+	}
+	// Exacta
+	for _, p := range page.Payoffs.Exacta {
+		payoffs = append(payoffs, p.toModel(model.PayoffTypeExacta))
+	}
+	// Trio
+	for _, p := range page.Payoffs.Trio {
+		payoffs = append(payoffs, p.toModel(model.PayoffTypeTrio))
+	}
+	// Trifecta
+	for _, p := range page.Payoffs.Trifecta {
+		payoffs = append(payoffs, p.toModel(model.PayoffTypeTrifecta))
+	}
+
+	// Clean up payoffs: remove any with empty Nums or JPY=0
+	cleanedPayoffs := make([]model.Payoff, 0, len(payoffs))
+	for _, p := range payoffs {
+		if len(p.Nums) > 0 && p.JPY > 0 {
+			cleanedPayoffs = append(cleanedPayoffs, p)
+		}
+	}
+
 	return &model.RaceResult{
 		RaceCard:         raceCard,
 		Going:            page.Going.OfSurface(raceCard.Surface),
@@ -562,6 +652,7 @@ func (c *JRAClient) GetRaceResult(ctx context.Context, raceCard *model.RaceCard)
 		Weather:          model.Weather(page.Weather),
 		PostTime:         postTime,
 		Entries:          entries,
+		Payoffs:          cleanedPayoffs,
 		LapTimes:         page.LapTimes,
 		CornerFormations: cornerFormations,
 	}, nil
