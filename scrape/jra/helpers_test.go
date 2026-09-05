@@ -60,7 +60,7 @@ func racePageHTML(rows ...string) string {
 	return `<table id="race_list"><tbody>` + strings.Join(rows, "") + `</tbody></table>`
 }
 
-func raceRowHTML(raceNo int, name, subName, gradeIcon, distance, courseType string, runners int, cname string) string {
+func raceRowHTML(raceNo int, postTime, name, subName, gradeIcon, distance, courseType string, runners int, cname string) string {
 	gradeSpan := ""
 	if gradeIcon != "" {
 		gradeSpan = `<span class="grade_icon"><img src="` + gradeIcon + `"/></span>`
@@ -69,8 +69,13 @@ func raceRowHTML(raceNo int, name, subName, gradeIcon, distance, courseType stri
 	if subName != "" {
 		subDiv = `<div>` + subName + `</div>`
 	}
+	timeCell := `<td class="time">` + postTime + `</td>`
+	if strings.HasPrefix(postTime, "<strong>") {
+		timeCell = `<td class="time on">` + postTime + `</td>`
+	}
 	return `<tr>` +
 		`<th class="race_num"><a href="/JRADB/accessS.html?CNAME=` + cname + `"><img alt="` + strconv.Itoa(raceNo) + `レース"/></a></th>` +
+		timeCell +
 		`<td class="race_name"><div><div>` + name + gradeSpan + `</div>` + subDiv + `</div></td>` +
 		`<td class="dist">` + distance + `</td>` +
 		`<td class="course">` + courseType + `</td>` +

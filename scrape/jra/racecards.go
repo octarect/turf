@@ -7,6 +7,7 @@ import (
 	"net/url"
 	"regexp"
 	"strings"
+	"time"
 
 	"github.com/octarect/turf/model"
 	"github.com/octarect/xtract"
@@ -17,14 +18,16 @@ type raceCardListPage struct {
 }
 
 type raceCard struct {
-	Num          int      `xpath:"replace(//th[@class='race_num']/a/img/@alt, '([0-9]+)レース', '$1')"`
-	Name         raceName `xpath:"//td[@class='race_name']/div/div[1]"`
-	SubName      raceName `xpath:"//td[@class='race_name']/div/div[2]"`
-	GradeIconSrc string   `xpath:"//td[@class='race_name']//span[@class='grade_icon']/img/@src"`
+	Num          int               `xpath:"replace(//th[@class='race_num']/a/img/@alt, '([0-9]+)レース', '$1')"`
+	Name         raceName          `xpath:"//td[@class='race_name']/div/div[1]"`
+	SubName      raceName          `xpath:"//td[@class='race_name']/div/div[2]"`
+	GradeIconSrc string            `xpath:"//td[@class='race_name']//span[@class='grade_icon']/img/@src"`
 	Distance     commaSeparatedInt `xpath:"//td[@class='dist']/descendant-or-self::*[@class='dist']/text()"`
-	Surface      surface  `xpath:"//td[@class='course']/text() | //td[@class='dist']/span[@class='course']/text()"`
-	Runners      int      `xpath:"normalize-space(//td[@class='num']/text())"`
-	CNAME        string   `xpath:"replace(//th[@class='race_num']/a/@href, '.*(pw[0-9A-Za-z/]+).*', '$1')"`
+	Surface      surface           `xpath:"//td[@class='course']/text() | //td[@class='dist']/span[@class='course']/text()"`
+	Runners      int               `xpath:"normalize-space(//td[@class='num']/text())"`
+	// Only available on `latest-races`
+	PostTime     string            `xpath:"normalize-space(//td[contains(concat(' ', normalize-space(@class), ' '), ' time ')])"`
+	CNAME        string            `xpath:"replace(//th[@class='race_num']/a/@href, '.*(pw[0-9A-Za-z/]+).*', '$1')"`
 }
 
 var regexpAgeGroup = regexp.MustCompile(`([234])歳(以上)?`)
@@ -104,6 +107,16 @@ func (rc *raceCard) toModel(fixture *model.Fixture) (*model.RaceCard, error) {
 		surface = model.SurfaceJump
 	}
 
+	var postTime *time.Time
+	if rc.PostTime != "" {
+		t, err := time.Parse("15時04分", rc.PostTime)
+		if err != nil {
+			return nil, fmt.Errorf("invalid post time %q: %w", rc.PostTime, err)
+		}
+		value := time.Date(fixture.Date.Year(), fixture.Date.Month(), fixture.Date.Day(), t.Hour(), t.Minute(), 0, 0, timeJST)
+		postTime = &value
+	}
+
 	return &model.RaceCard{
 		SpecialName: specialName,
 		Num:         rc.Num,
@@ -112,6 +125,7 @@ func (rc *raceCard) toModel(fixture *model.Fixture) (*model.RaceCard, error) {
 		Surface:     surface,
 		Distance:    int(rc.Distance),
 		Runners:     rc.Runners,
+		PostTime:    postTime,
 		CNAME:       rc.CNAME,
 		Fixture:     fixture,
 	}, nil
