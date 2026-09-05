@@ -103,7 +103,7 @@ func TestListRaceCards(t *testing.T) {
 		{
 			name: "single race",
 			html: racePageHTML(
-				raceRowHTML(1, "3歳未勝利", "", "", "1600", "芝", 16, "pw01race01"),
+				raceRowHTML(1, "10時05分", "3歳未勝利", "", "", "1600", "芝", 16, "pw01race01"),
 			),
 			want: []*model.RaceCard{
 				{
@@ -114,6 +114,7 @@ func TestListRaceCards(t *testing.T) {
 					Surface:     model.SurfaceTurf,
 					Distance:    1600,
 					Runners:     16,
+					PostTime:    timePointer(time.Date(2026, 5, 3, 10, 5, 0, 0, timeJST)),
 					CNAME:       "pw01race01",
 					Fixture:     fixture,
 				},
@@ -122,7 +123,7 @@ func TestListRaceCards(t *testing.T) {
 		{
 			name: "newcomer race",
 			html: racePageHTML(
-				raceRowHTML(1, "メイクデビュー東京", "2歳新馬（混合）［指定］", "", "1200", "芝", 8, "pw01race01"),
+				raceRowHTML(1, "", "メイクデビュー東京", "2歳新馬（混合）［指定］", "", "1200", "芝", 8, "pw01race01"),
 			),
 			want: []*model.RaceCard{
 				{
@@ -141,9 +142,9 @@ func TestListRaceCards(t *testing.T) {
 		{
 			name: "multiple races",
 			html: racePageHTML(
-				raceRowHTML(1, "3歳1勝クラス", "1勝クラス", "", "1800", "芝", 14, "pw01race01"),
-				raceRowHTML(2, "4歳以上2勝クラス", "2勝クラス", "", "1200", "ダート", 12, "pw01race02"),
-				raceRowHTML(11, "東京優駿", "3歳オープン（国際）牡・牝（指定）", "/img/icon_grade_s_g1.png", "2,400", "芝", 18, "pw01race11"),
+				raceRowHTML(1, "10時10分", "3歳1勝クラス", "1勝クラス", "", "1800", "芝", 14, "pw01race01"),
+				raceRowHTML(2, "<strong>10時40分</strong>", "4歳以上2勝クラス", "2勝クラス", "", "1200", "ダート", 12, "pw01race02"),
+				raceRowHTML(11, "15時40分", "東京優駿", "3歳オープン（国際）牡・牝（指定）", "/img/icon_grade_s_g1.png", "2,400", "芝", 18, "pw01race11"),
 			),
 			want: []*model.RaceCard{
 				{
@@ -154,6 +155,7 @@ func TestListRaceCards(t *testing.T) {
 					Surface:     model.SurfaceTurf,
 					Distance:    1800,
 					Runners:     14,
+					PostTime:    timePointer(time.Date(2026, 5, 3, 10, 10, 0, 0, timeJST)),
 					CNAME:       "pw01race01",
 					Fixture:     fixture,
 				},
@@ -165,6 +167,7 @@ func TestListRaceCards(t *testing.T) {
 					Surface:     model.SurfaceDirt,
 					Distance:    1200,
 					Runners:     12,
+					PostTime:    timePointer(time.Date(2026, 5, 3, 10, 40, 0, 0, timeJST)),
 					CNAME:       "pw01race02",
 					Fixture:     fixture,
 				},
@@ -176,6 +179,7 @@ func TestListRaceCards(t *testing.T) {
 					Surface:     model.SurfaceTurf,
 					Distance:    2400,
 					Runners:     18,
+					PostTime:    timePointer(time.Date(2026, 5, 3, 15, 40, 0, 0, timeJST)),
 					CNAME:       "pw01race11",
 					Fixture:     fixture,
 				},
@@ -184,7 +188,7 @@ func TestListRaceCards(t *testing.T) {
 		{
 			name: "jump race (障害 in name)",
 			html: racePageHTML(
-				raceRowHTML(4, "障害4歳以上未勝利", "", "", "3000", "芝", 10, "pw01race04"),
+				raceRowHTML(4, "11時35分", "障害4歳以上未勝利", "", "", "3000", "芝", 10, "pw01race04"),
 			),
 			want: []*model.RaceCard{
 				{
@@ -195,6 +199,7 @@ func TestListRaceCards(t *testing.T) {
 					Surface:     model.SurfaceJump,
 					Distance:    3000,
 					Runners:     10,
+					PostTime:    timePointer(time.Date(2026, 5, 3, 11, 35, 0, 0, timeJST)),
 					CNAME:       "pw01race04",
 					Fixture:     fixture,
 				},
@@ -203,7 +208,7 @@ func TestListRaceCards(t *testing.T) {
 		{
 			name: "jump race (障害 in subName)",
 			html: racePageHTML(
-				raceRowHTML(11, "中山グランドジャンプ", "4歳以上障害オープン（混合）", "/img/icon_grade_s_jg1.png", "4,250", "芝", 15, "pw01race11"),
+				raceRowHTML(11, "15時40分", "中山グランドジャンプ", "4歳以上障害オープン（混合）", "/img/icon_grade_s_jg1.png", "4,250", "芝", 15, "pw01race11"),
 			),
 			want: []*model.RaceCard{
 				{
@@ -214,6 +219,7 @@ func TestListRaceCards(t *testing.T) {
 					Surface:     model.SurfaceJump,
 					Distance:    4250,
 					Runners:     15,
+					PostTime:    timePointer(time.Date(2026, 5, 3, 15, 40, 0, 0, timeJST)),
 					CNAME:       "pw01race11",
 					Fixture:     fixture,
 				},
@@ -223,6 +229,11 @@ func TestListRaceCards(t *testing.T) {
 			name: "empty table",
 			html: racePageHTML(),
 			want: []*model.RaceCard{},
+		},
+		{
+			name:    "invalid post time",
+			html:    racePageHTML(raceRowHTML(1, "soon", "3歳未勝利", "", "", "1600", "芝", 16, "pw01race01")),
+			wantErr: true,
 		},
 	}
 
@@ -243,4 +254,8 @@ func TestListRaceCards(t *testing.T) {
 			}
 		})
 	}
+}
+
+func timePointer(t time.Time) *time.Time {
+	return &t
 }

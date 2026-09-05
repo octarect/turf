@@ -151,6 +151,31 @@ func TestStructuredJSONUsesLabels(t *testing.T) {
 	}
 }
 
+func TestRaceCardPostTimeJSON(t *testing.T) {
+	postTime := time.Date(2026, 5, 3, 10, 5, 0, 0, time.FixedZone("JST", 9*60*60))
+	tests := []struct {
+		name string
+		rc   RaceCard
+		want string
+	}{
+		{name: "post time", rc: RaceCard{PostTime: &postTime}, want: `"postTime":"2026-05-03T10:05:00+09:00"`},
+		{name: "no post time", rc: RaceCard{}, want: `"postTime"`},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			b, err := json.Marshal(tt.rc)
+			if err != nil {
+				t.Fatalf("Marshal() error = %v", err)
+			}
+			contains := strings.Contains(string(b), tt.want)
+			if contains != (tt.rc.PostTime != nil) {
+				t.Fatalf("JSON = %s, contains %s = %v", b, tt.want, contains)
+			}
+		})
+	}
+}
+
 func TestRaceCardDisplayName(t *testing.T) {
 	tests := []struct {
 		name   string
